@@ -25,7 +25,7 @@
 formale per la descrizione semantica delle infrastrutture aeroportuali, dei servizi offerti 
 e dei collegamenti aerei. Modella l'aeroporto come hub logistico caratterizzato da capacità operative, ruoli istituzionali e vincoli regolatori. Il dominio copre entità fisiche, organizzative ed eventi. L'ontologia supporta task di consultazione, catalogazione, 
 verifica di vincoli operativi."""@it ,
-                                                                        """The ACIO (Airport Connectivity & Infrastructure Ontology) provides a formal structure for the semantic description of airport infrastructures, offered services, and air connections. It models the airport as a logistic hub characterized by operational capacities, institutional roles, and regulatory constraints. The domain covers physical, organizational, and event-based entities. The ontology supports tasks such as querying, cataloguing, and verification of operational constraints."""@en ;
+                                                                      "The ACIO (Airport Connectivity & Infrastructure Ontology) provides a formal structure for the semantic description of airport infrastructures, offered services, and air connections. It models the airport as a logistic hub characterized by operational capacities, institutional roles, and regulatory constraints. The domain covers physical, organizational, and event-based entities. The ontology supports tasks such as querying, cataloguing, and verification of operational constraints."@en ;
                                                          rdfs:label "Airport Connectivity & Infrastructure Ontology (ACIO)"@en ,
                                                                     "Airport Connectivity & Infrastructure Ontology (ACIO)"@it .
 
@@ -57,6 +57,10 @@ vann:preferredNamespacePrefix rdf:type owl:AnnotationProperty .
 vann:preferredNamespaceUri rdf:type owl:AnnotationProperty .
 
 
+###  http://swrl.stanford.edu/ontologies/3.3/swrla.owl#isRuleEnabled
+<http://swrl.stanford.edu/ontologies/3.3/swrla.owl#isRuleEnabled> rdf:type owl:AnnotationProperty .
+
+
 ###  http://www.w3.org/2004/02/skos/core#broadMatch
 skos:broadMatch rdf:type owl:AnnotationProperty .
 
@@ -81,7 +85,27 @@ xsd:gYear rdf:type rdfs:Datatype .
 :arrivaA rdf:type owl:ObjectProperty ,
                   owl:FunctionalProperty ;
          rdfs:domain :Volo ;
-         rdfs:range :Aeroporto ;
+         rdfs:range :Aeroporto ,
+                    [ rdf:type owl:Restriction ;
+                      owl:onProperty :haPista ;
+                      owl:minQualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                      owl:onClass :Pista
+                    ] ,
+                    [ rdf:type owl:Restriction ;
+                      owl:onProperty :haTerminal ;
+                      owl:minQualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                      owl:onClass :Terminal
+                    ] ,
+                    [ rdf:type owl:Restriction ;
+                      owl:onProperty :CodiceIATA ;
+                      owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                      owl:onDataRange xsd:string
+                    ] ,
+                    [ rdf:type owl:Restriction ;
+                      owl:onProperty :CodiceICAO ;
+                      owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                      owl:onDataRange xsd:string
+                    ] ;
          rdfs:comment "Indica l'aeroporto di destinazione di un volo."@it ,
                       "Indicates the destination airport of a flight."@en ;
          rdfs:label "arrivaA"@it ,
@@ -91,7 +115,12 @@ xsd:gYear rdf:type rdfs:Datatype .
 ###  http://www.semanticweb.org/sofia/ontologies/2026/acio/cittàInNazione
 :cittàInNazione rdf:type owl:ObjectProperty ;
                 rdfs:domain :Città ;
-                rdfs:range :Nazione ;
+                rdfs:range :Nazione ,
+                           [ rdf:type owl:Restriction ;
+                             owl:onProperty :CodiceISO ;
+                             owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                             owl:onDataRange xsd:string
+                           ] ;
                 rdfs:comment "Indica la nazione in cui si trova una città."@it ,
                              "Indicates the nation in which a city is located."@en ;
                 rdfs:label "cittàInNazione"@it ,
@@ -101,8 +130,48 @@ xsd:gYear rdf:type rdfs:Datatype .
 ###  http://www.semanticweb.org/sofia/ontologies/2026/acio/collegatoCon
 :collegatoCon rdf:type owl:ObjectProperty ,
                        owl:TransitiveProperty ;
-              rdfs:domain :Aeroporto ;
-              rdfs:range :Aeroporto ;
+              rdfs:domain :Aeroporto ,
+                          [ rdf:type owl:Restriction ;
+                            owl:onProperty :haPista ;
+                            owl:minQualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                            owl:onClass :Pista
+                          ] ,
+                          [ rdf:type owl:Restriction ;
+                            owl:onProperty :haTerminal ;
+                            owl:minQualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                            owl:onClass :Terminal
+                          ] ,
+                          [ rdf:type owl:Restriction ;
+                            owl:onProperty :CodiceIATA ;
+                            owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                            owl:onDataRange xsd:string
+                          ] ,
+                          [ rdf:type owl:Restriction ;
+                            owl:onProperty :CodiceICAO ;
+                            owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                            owl:onDataRange xsd:string
+                          ] ;
+              rdfs:range :Aeroporto ,
+                         [ rdf:type owl:Restriction ;
+                           owl:onProperty :haPista ;
+                           owl:minQualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                           owl:onClass :Pista
+                         ] ,
+                         [ rdf:type owl:Restriction ;
+                           owl:onProperty :haTerminal ;
+                           owl:minQualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                           owl:onClass :Terminal
+                         ] ,
+                         [ rdf:type owl:Restriction ;
+                           owl:onProperty :CodiceIATA ;
+                           owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                           owl:onDataRange xsd:string
+                         ] ,
+                         [ rdf:type owl:Restriction ;
+                           owl:onProperty :CodiceICAO ;
+                           owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                           owl:onDataRange xsd:string
+                         ] ;
               rdfs:comment "Indica che un aeroporto è collegato con un altro tramite voli diretti. Proprietà transitiva."@it ,
                            "Indicates that an airport is connected to another via direct flights. Transitive property."@en ;
               rdfs:label "collegatoCon"@it ,
@@ -113,7 +182,27 @@ xsd:gYear rdf:type rdfs:Datatype .
 :gestisce rdf:type owl:ObjectProperty ;
           owl:inverseOf :gestitoDa ;
           rdfs:domain :AutoritàAeroportuale ;
-          rdfs:range :Aeroporto ;
+          rdfs:range :Aeroporto ,
+                     [ rdf:type owl:Restriction ;
+                       owl:onProperty :haPista ;
+                       owl:minQualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                       owl:onClass :Pista
+                     ] ,
+                     [ rdf:type owl:Restriction ;
+                       owl:onProperty :haTerminal ;
+                       owl:minQualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                       owl:onClass :Terminal
+                     ] ,
+                     [ rdf:type owl:Restriction ;
+                       owl:onProperty :CodiceIATA ;
+                       owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                       owl:onDataRange xsd:string
+                     ] ,
+                     [ rdf:type owl:Restriction ;
+                       owl:onProperty :CodiceICAO ;
+                       owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                       owl:onDataRange xsd:string
+                     ] ;
           rdfs:comment "Indica che un'autorità aeroportuale gestisce un aeroporto."@it ,
                        "Indicates that an airport authority manages an airport."@en ;
           rdfs:label "gestisce"@it ,
@@ -122,7 +211,27 @@ xsd:gYear rdf:type rdfs:Datatype .
 
 ###  http://www.semanticweb.org/sofia/ontologies/2026/acio/gestitoDa
 :gestitoDa rdf:type owl:ObjectProperty ;
-           rdfs:domain :Aeroporto ;
+           rdfs:domain :Aeroporto ,
+                       [ rdf:type owl:Restriction ;
+                         owl:onProperty :haPista ;
+                         owl:minQualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                         owl:onClass :Pista
+                       ] ,
+                       [ rdf:type owl:Restriction ;
+                         owl:onProperty :haTerminal ;
+                         owl:minQualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                         owl:onClass :Terminal
+                       ] ,
+                       [ rdf:type owl:Restriction ;
+                         owl:onProperty :CodiceIATA ;
+                         owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                         owl:onDataRange xsd:string
+                       ] ,
+                       [ rdf:type owl:Restriction ;
+                         owl:onProperty :CodiceICAO ;
+                         owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                         owl:onDataRange xsd:string
+                       ] ;
            rdfs:range :AutoritàAeroportuale ;
            rdfs:comment "Indica l'autorità aeroportuale che gestisce un aeroporto."@it ,
                         "Indicates the airport authority that manages an airport."@en ;
@@ -132,7 +241,11 @@ xsd:gYear rdf:type rdfs:Datatype .
 
 ###  http://www.semanticweb.org/sofia/ontologies/2026/acio/haDogana
 :haDogana rdf:type owl:ObjectProperty ;
-          rdfs:domain :Aeroporto ;
+          rdfs:domain :Terminal ,
+                      [ rdf:type owl:Restriction ;
+                        owl:onProperty :haGate ;
+                        owl:someValuesFrom :Gate
+                      ] ;
           rdfs:range :Dogana ;
           rdfs:comment "Indica che un terminal dispone di un ufficio doganale."@it ,
                        "Indicates that a terminal has a customs office."@en ;
@@ -142,7 +255,11 @@ xsd:gYear rdf:type rdfs:Datatype .
 
 ###  http://www.semanticweb.org/sofia/ontologies/2026/acio/haGate
 :haGate rdf:type owl:ObjectProperty ;
-        rdfs:domain :Terminal ;
+        rdfs:domain :Terminal ,
+                    [ rdf:type owl:Restriction ;
+                      owl:onProperty :haGate ;
+                      owl:someValuesFrom :Gate
+                    ] ;
         rdfs:range :Gate ;
         rdfs:comment "Indica che un terminal è dotato di uno o più gate di imbarco."@it ,
                      "Indicates that a terminal has one or more boarding gates."@en ;
@@ -152,7 +269,11 @@ xsd:gYear rdf:type rdfs:Datatype .
 
 ###  http://www.semanticweb.org/sofia/ontologies/2026/acio/haLounge
 :haLounge rdf:type owl:ObjectProperty ;
-          rdfs:domain :Terminal ;
+          rdfs:domain :Terminal ,
+                      [ rdf:type owl:Restriction ;
+                        owl:onProperty :haGate ;
+                        owl:someValuesFrom :Gate
+                      ] ;
           rdfs:range :Lounge ;
           rdfs:comment "Indica che un terminal dispone di una lounge passeggeri."@it ,
                        "Indicates that a terminal has a passenger lounge."@en ;
@@ -162,7 +283,27 @@ xsd:gYear rdf:type rdfs:Datatype .
 
 ###  http://www.semanticweb.org/sofia/ontologies/2026/acio/haPista
 :haPista rdf:type owl:ObjectProperty ;
-         rdfs:domain :Aeroporto ;
+         rdfs:domain :Aeroporto ,
+                     [ rdf:type owl:Restriction ;
+                       owl:onProperty :haPista ;
+                       owl:minQualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                       owl:onClass :Pista
+                     ] ,
+                     [ rdf:type owl:Restriction ;
+                       owl:onProperty :haTerminal ;
+                       owl:minQualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                       owl:onClass :Terminal
+                     ] ,
+                     [ rdf:type owl:Restriction ;
+                       owl:onProperty :CodiceIATA ;
+                       owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                       owl:onDataRange xsd:string
+                     ] ,
+                     [ rdf:type owl:Restriction ;
+                       owl:onProperty :CodiceICAO ;
+                       owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                       owl:onDataRange xsd:string
+                     ] ;
          rdfs:range :Pista ;
          rdfs:comment "Indica che un aeroporto è dotato di una pista di atterraggio/decollo."@it ,
                       "Indicates that an airport has a runway."@en ;
@@ -172,8 +313,32 @@ xsd:gYear rdf:type rdfs:Datatype .
 
 ###  http://www.semanticweb.org/sofia/ontologies/2026/acio/haTerminal
 :haTerminal rdf:type owl:ObjectProperty ;
-            rdfs:domain :Aeroporto ;
-            rdfs:range :Terminal ;
+            rdfs:domain :Aeroporto ,
+                        [ rdf:type owl:Restriction ;
+                          owl:onProperty :haPista ;
+                          owl:minQualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                          owl:onClass :Pista
+                        ] ,
+                        [ rdf:type owl:Restriction ;
+                          owl:onProperty :haTerminal ;
+                          owl:minQualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                          owl:onClass :Terminal
+                        ] ,
+                        [ rdf:type owl:Restriction ;
+                          owl:onProperty :CodiceIATA ;
+                          owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                          owl:onDataRange xsd:string
+                        ] ,
+                        [ rdf:type owl:Restriction ;
+                          owl:onProperty :CodiceICAO ;
+                          owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                          owl:onDataRange xsd:string
+                        ] ;
+            rdfs:range :Terminal ,
+                       [ rdf:type owl:Restriction ;
+                         owl:onProperty :haGate ;
+                         owl:someValuesFrom :Gate
+                       ] ;
             rdfs:comment "Indica che un aeroporto è dotato di uno o più terminal passeggeri."@it ,
                          "Indicates that an airport has one or more passenger terminals."@en ;
             rdfs:label "haTerminal"@it ,
@@ -183,7 +348,13 @@ xsd:gYear rdf:type rdfs:Datatype .
 ###  http://www.semanticweb.org/sofia/ontologies/2026/acio/haTipoZona
 :haTipoZona rdf:type owl:ObjectProperty ;
             rdfs:domain :Dogana ;
-            rdfs:range :ZonaDoganale ;
+            rdfs:range :ZonaDoganale ,
+                       [ rdf:type owl:Class ;
+                         owl:oneOf ( :ZonaExtraSchengen
+                                     :ZonaSchengen
+                                     :ZonaTransito
+                                   )
+                       ] ;
             rdfs:comment "Indica il tipo di zona doganale associato a un ufficio doganale."@it ,
                          "Indicates the type of customs zone associated with a customs office."@en ;
             rdfs:label "haTipoZona"@it ,
@@ -193,8 +364,27 @@ xsd:gYear rdf:type rdfs:Datatype .
 ###  http://www.semanticweb.org/sofia/ontologies/2026/acio/haVolo
 :haVolo rdf:type owl:ObjectProperty ;
         owl:inverseOf :parteDa ;
-        rdf:type owl:InverseFunctionalProperty ;
-        rdfs:domain :Aeroporto ;
+        rdfs:domain :Aeroporto ,
+                    [ rdf:type owl:Restriction ;
+                      owl:onProperty :haPista ;
+                      owl:minQualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                      owl:onClass :Pista
+                    ] ,
+                    [ rdf:type owl:Restriction ;
+                      owl:onProperty :haTerminal ;
+                      owl:minQualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                      owl:onClass :Terminal
+                    ] ,
+                    [ rdf:type owl:Restriction ;
+                      owl:onProperty :CodiceIATA ;
+                      owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                      owl:onDataRange xsd:string
+                    ] ,
+                    [ rdf:type owl:Restriction ;
+                      owl:onProperty :CodiceICAO ;
+                      owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                      owl:onDataRange xsd:string
+                    ] ;
         rdfs:range :Volo ;
         rdfs:comment "Indica che un aeroporto è aeroporto di partenza di un volo."@it ,
                      "Indicates that an airport is the departure airport of a flight."@en ;
@@ -205,9 +395,28 @@ xsd:gYear rdf:type rdfs:Datatype .
 ###  http://www.semanticweb.org/sofia/ontologies/2026/acio/operaIn
 :operaIn rdf:type owl:ObjectProperty ;
          rdfs:domain :CompagniaAerea ;
-         rdfs:range :Aeroporto ;
-         owl:propertyChainAxiom ( [ owl:inverseOf :operatoDa
-                                  ]
+         rdfs:range :Aeroporto ,
+                    [ rdf:type owl:Restriction ;
+                      owl:onProperty :haPista ;
+                      owl:minQualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                      owl:onClass :Pista
+                    ] ,
+                    [ rdf:type owl:Restriction ;
+                      owl:onProperty :haTerminal ;
+                      owl:minQualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                      owl:onClass :Terminal
+                    ] ,
+                    [ rdf:type owl:Restriction ;
+                      owl:onProperty :CodiceIATA ;
+                      owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                      owl:onDataRange xsd:string
+                    ] ,
+                    [ rdf:type owl:Restriction ;
+                      owl:onProperty :CodiceICAO ;
+                      owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                      owl:onDataRange xsd:string
+                    ] ;
+         owl:propertyChainAxiom ( :voloOperatoDa
                                   :parteDa
                                 ) ;
          rdfs:comment "Indica che una compagnia aerea opera in un determinato aeroporto. Derivata tramite catena di proprietà: inverso di operatoDa seguito da parteDa."@it ,
@@ -217,8 +426,9 @@ xsd:gYear rdf:type rdfs:Datatype .
 
 
 ###  http://www.semanticweb.org/sofia/ontologies/2026/acio/operatoDa
-:operatoDa rdf:type owl:ObjectProperty ,
-                    owl:FunctionalProperty ;
+:operatoDa rdf:type owl:ObjectProperty ;
+           owl:inverseOf :voloOperatoDa ;
+           rdf:type owl:FunctionalProperty ;
            rdfs:domain :Volo ;
            rdfs:range :CompagniaAerea ;
            rdfs:comment "Indica la compagnia aerea che opera un determinato volo."@it ,
@@ -231,7 +441,27 @@ xsd:gYear rdf:type rdfs:Datatype .
 :parteDa rdf:type owl:ObjectProperty ,
                   owl:FunctionalProperty ;
          rdfs:domain :Volo ;
-         rdfs:range :Aeroporto ;
+         rdfs:range :Aeroporto ,
+                    [ rdf:type owl:Restriction ;
+                      owl:onProperty :haPista ;
+                      owl:minQualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                      owl:onClass :Pista
+                    ] ,
+                    [ rdf:type owl:Restriction ;
+                      owl:onProperty :haTerminal ;
+                      owl:minQualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                      owl:onClass :Terminal
+                    ] ,
+                    [ rdf:type owl:Restriction ;
+                      owl:onProperty :CodiceIATA ;
+                      owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                      owl:onDataRange xsd:string
+                    ] ,
+                    [ rdf:type owl:Restriction ;
+                      owl:onProperty :CodiceICAO ;
+                      owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                      owl:onDataRange xsd:string
+                    ] ;
          rdfs:comment "Indica l'aeroporto di partenza di un volo."@it ,
                       "Indicates the departure airport of a flight."@en ;
          rdfs:label "departs from"@en ,
@@ -240,8 +470,33 @@ xsd:gYear rdf:type rdfs:Datatype .
 
 ###  http://www.semanticweb.org/sofia/ontologies/2026/acio/situatoIn
 :situatoIn rdf:type owl:ObjectProperty ;
-           rdfs:domain :Aeroporto ;
-           rdfs:range :Nazione ;
+           rdfs:domain :Aeroporto ,
+                       [ rdf:type owl:Restriction ;
+                         owl:onProperty :haPista ;
+                         owl:minQualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                         owl:onClass :Pista
+                       ] ,
+                       [ rdf:type owl:Restriction ;
+                         owl:onProperty :haTerminal ;
+                         owl:minQualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                         owl:onClass :Terminal
+                       ] ,
+                       [ rdf:type owl:Restriction ;
+                         owl:onProperty :CodiceIATA ;
+                         owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                         owl:onDataRange xsd:string
+                       ] ,
+                       [ rdf:type owl:Restriction ;
+                         owl:onProperty :CodiceICAO ;
+                         owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                         owl:onDataRange xsd:string
+                       ] ;
+           rdfs:range :Nazione ,
+                      [ rdf:type owl:Restriction ;
+                        owl:onProperty :CodiceISO ;
+                        owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                        owl:onDataRange xsd:string
+                      ] ;
            owl:propertyChainAxiom ( :situatoInCittà
                                     :cittàInNazione
                                   ) ;
@@ -253,12 +508,42 @@ xsd:gYear rdf:type rdfs:Datatype .
 
 ###  http://www.semanticweb.org/sofia/ontologies/2026/acio/situatoInCittà
 :situatoInCittà rdf:type owl:ObjectProperty ;
-                rdfs:domain :Aeroporto ;
+                rdfs:domain :Aeroporto ,
+                            [ rdf:type owl:Restriction ;
+                              owl:onProperty :haPista ;
+                              owl:minQualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                              owl:onClass :Pista
+                            ] ,
+                            [ rdf:type owl:Restriction ;
+                              owl:onProperty :haTerminal ;
+                              owl:minQualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                              owl:onClass :Terminal
+                            ] ,
+                            [ rdf:type owl:Restriction ;
+                              owl:onProperty :CodiceIATA ;
+                              owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                              owl:onDataRange xsd:string
+                            ] ,
+                            [ rdf:type owl:Restriction ;
+                              owl:onProperty :CodiceICAO ;
+                              owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                              owl:onDataRange xsd:string
+                            ] ;
                 rdfs:range :Città ;
                 rdfs:comment "Indica la città in cui è situato un aeroporto."@it ,
                              "Indicates the city in which an airport is located."@en ;
                 rdfs:label "located in city"@en ,
                            "situatoInCittà"@it .
+
+
+###  http://www.semanticweb.org/sofia/ontologies/2026/acio/voloOperatoDa
+:voloOperatoDa rdf:type owl:ObjectProperty ;
+               rdfs:domain :CompagniaAerea ;
+               rdfs:range :Volo ;
+               rdfs:comment "Inverse property of operatoDa. Indicates the flights operated by an airline."@en ,
+                            "Proprietà inversa di operatoDa. Indica i voli operati da una compagnia aerea."@it ;
+               rdfs:label "flight operated by"@en ,
+                          "voloOperatoDa"@it .
 
 
 #################################################################
@@ -267,7 +552,27 @@ xsd:gYear rdf:type rdfs:Datatype .
 
 ###  http://www.semanticweb.org/sofia/ontologies/2026/acio/AnnoApertura
 :AnnoApertura rdf:type owl:DatatypeProperty ;
-              rdfs:domain :Aeroporto ;
+              rdfs:domain :Aeroporto ,
+                          [ rdf:type owl:Restriction ;
+                            owl:onProperty :haPista ;
+                            owl:minQualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                            owl:onClass :Pista
+                          ] ,
+                          [ rdf:type owl:Restriction ;
+                            owl:onProperty :haTerminal ;
+                            owl:minQualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                            owl:onClass :Terminal
+                          ] ,
+                          [ rdf:type owl:Restriction ;
+                            owl:onProperty :CodiceIATA ;
+                            owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                            owl:onDataRange xsd:string
+                          ] ,
+                          [ rdf:type owl:Restriction ;
+                            owl:onProperty :CodiceICAO ;
+                            owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                            owl:onDataRange xsd:string
+                          ] ;
               rdfs:range xsd:gYear ;
               rdfs:comment "Anno di apertura dell'aeroporto."@it ,
                            "Year of opening of the airport."@en ;
@@ -277,7 +582,27 @@ xsd:gYear rdf:type rdfs:Datatype .
 
 ###  http://www.semanticweb.org/sofia/ontologies/2026/acio/CodiceIATA
 :CodiceIATA rdf:type owl:DatatypeProperty ;
-            rdfs:domain :Aeroporto ;
+            rdfs:domain :Aeroporto ,
+                        [ rdf:type owl:Restriction ;
+                          owl:onProperty :haPista ;
+                          owl:minQualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                          owl:onClass :Pista
+                        ] ,
+                        [ rdf:type owl:Restriction ;
+                          owl:onProperty :haTerminal ;
+                          owl:minQualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                          owl:onClass :Terminal
+                        ] ,
+                        [ rdf:type owl:Restriction ;
+                          owl:onProperty :CodiceIATA ;
+                          owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                          owl:onDataRange xsd:string
+                        ] ,
+                        [ rdf:type owl:Restriction ;
+                          owl:onProperty :CodiceICAO ;
+                          owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                          owl:onDataRange xsd:string
+                        ] ;
             rdfs:range xsd:string ;
             rdfs:comment "Codice identificativo IATA a tre lettere dell'aeroporto."@it ,
                          "Three-letter IATA identification code of the airport."@en ;
@@ -287,7 +612,27 @@ xsd:gYear rdf:type rdfs:Datatype .
 
 ###  http://www.semanticweb.org/sofia/ontologies/2026/acio/CodiceICAO
 :CodiceICAO rdf:type owl:DatatypeProperty ;
-            rdfs:domain :Aeroporto ;
+            rdfs:domain :Aeroporto ,
+                        [ rdf:type owl:Restriction ;
+                          owl:onProperty :haPista ;
+                          owl:minQualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                          owl:onClass :Pista
+                        ] ,
+                        [ rdf:type owl:Restriction ;
+                          owl:onProperty :haTerminal ;
+                          owl:minQualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                          owl:onClass :Terminal
+                        ] ,
+                        [ rdf:type owl:Restriction ;
+                          owl:onProperty :CodiceIATA ;
+                          owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                          owl:onDataRange xsd:string
+                        ] ,
+                        [ rdf:type owl:Restriction ;
+                          owl:onProperty :CodiceICAO ;
+                          owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                          owl:onDataRange xsd:string
+                        ] ;
             rdfs:range xsd:string ;
             rdfs:comment "Codice identificativo ICAO a quattro lettere dell'aeroporto."@it ,
                          "Four-letter ICAO identification code of the airport."@en ;
@@ -297,7 +642,12 @@ xsd:gYear rdf:type rdfs:Datatype .
 
 ###  http://www.semanticweb.org/sofia/ontologies/2026/acio/CodiceISO
 :CodiceISO rdf:type owl:DatatypeProperty ;
-           rdfs:domain :Nazione ;
+           rdfs:domain :Nazione ,
+                       [ rdf:type owl:Restriction ;
+                         owl:onProperty :CodiceISO ;
+                         owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                         owl:onDataRange xsd:string
+                       ] ;
            rdfs:range xsd:string ;
            rdfs:comment "Codice ISO della nazione."@it ,
                         "ISO code of the nation."@en ;
@@ -307,7 +657,12 @@ xsd:gYear rdf:type rdfs:Datatype .
 
 ###  http://www.semanticweb.org/sofia/ontologies/2026/acio/InZonaSchengen
 :InZonaSchengen rdf:type owl:DatatypeProperty ;
-                rdfs:domain :Nazione ;
+                rdfs:domain :Nazione ,
+                            [ rdf:type owl:Restriction ;
+                              owl:onProperty :CodiceISO ;
+                              owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                              owl:onDataRange xsd:string
+                            ] ;
                 rdfs:range xsd:boolean ;
                 rdfs:comment "Indica se la nazione fa parte della zona Schengen."@it ,
                              "Indicates whether the nation is part of the Schengen area."@en ;
@@ -337,7 +692,12 @@ xsd:gYear rdf:type rdfs:Datatype .
 
 ###  http://www.semanticweb.org/sofia/ontologies/2026/acio/NomeNazione
 :NomeNazione rdf:type owl:DatatypeProperty ;
-             rdfs:domain :Nazione ;
+             rdfs:domain :Nazione ,
+                         [ rdf:type owl:Restriction ;
+                           owl:onProperty :CodiceISO ;
+                           owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                           owl:onDataRange xsd:string
+                         ] ;
              rdfs:range xsd:string ;
              rdfs:comment "Name of the nation."@en ,
                           "Nome della nazione."@it ;
@@ -357,7 +717,27 @@ xsd:gYear rdf:type rdfs:Datatype .
 
 ###  http://www.semanticweb.org/sofia/ontologies/2026/acio/PasseggeriAnnui
 :PasseggeriAnnui rdf:type owl:DatatypeProperty ;
-                 rdfs:domain :Aeroporto ;
+                 rdfs:domain :Aeroporto ,
+                             [ rdf:type owl:Restriction ;
+                               owl:onProperty :haPista ;
+                               owl:minQualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                               owl:onClass :Pista
+                             ] ,
+                             [ rdf:type owl:Restriction ;
+                               owl:onProperty :haTerminal ;
+                               owl:minQualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                               owl:onClass :Terminal
+                             ] ,
+                             [ rdf:type owl:Restriction ;
+                               owl:onProperty :CodiceIATA ;
+                               owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                               owl:onDataRange xsd:string
+                             ] ,
+                             [ rdf:type owl:Restriction ;
+                               owl:onProperty :CodiceICAO ;
+                               owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                               owl:onDataRange xsd:string
+                             ] ;
                  rdfs:range xsd:integer ;
                  rdfs:comment "Number of passengers transiting through the airport in the reference year."@en ,
                               "Numero di passeggeri transitati nell'aeroporto nell'anno di riferimento."@it ;
@@ -411,7 +791,27 @@ xsd:gYear rdf:type rdfs:Datatype .
 
 ###  http://www.semanticweb.org/sofia/ontologies/2026/acio/AeroportoCivile
 :AeroportoCivile rdf:type owl:Class ;
-                 rdfs:subClassOf :Aeroporto ;
+                 rdfs:subClassOf :Aeroporto ,
+                                 [ rdf:type owl:Restriction ;
+                                   owl:onProperty :haPista ;
+                                   owl:minQualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                                   owl:onClass :Pista
+                                 ] ,
+                                 [ rdf:type owl:Restriction ;
+                                   owl:onProperty :haTerminal ;
+                                   owl:minQualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                                   owl:onClass :Terminal
+                                 ] ,
+                                 [ rdf:type owl:Restriction ;
+                                   owl:onProperty :CodiceIATA ;
+                                   owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                                   owl:onDataRange xsd:string
+                                 ] ,
+                                 [ rdf:type owl:Restriction ;
+                                   owl:onProperty :CodiceICAO ;
+                                   owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                                   owl:onDataRange xsd:string
+                                 ] ;
                  rdfs:comment "Aeroporto destinato al traffico civile commerciale e/o privato."@it ,
                               "Airport intended for civil commercial and/or private traffic."@en ;
                  rdfs:label "AeroportoCivile"@it ,
@@ -422,22 +822,95 @@ xsd:gYear rdf:type rdfs:Datatype .
 :AeroportoConDogana rdf:type owl:Class ;
                     owl:equivalentClass [ owl:intersectionOf ( :Aeroporto
                                                                [ rdf:type owl:Restriction ;
-                                                                 owl:onProperty :haDogana ;
-                                                                 owl:someValuesFrom :Dogana
+                                                                 owl:onProperty :haTerminal ;
+                                                                 owl:someValuesFrom [ owl:intersectionOf ( :Terminal
+                                                                                                           [ rdf:type owl:Restriction ;
+                                                                                                             owl:onProperty :haDogana ;
+                                                                                                             owl:someValuesFrom :Dogana
+                                                                                                           ]
+                                                                                                         ) ;
+                                                                                      rdf:type owl:Class
+                                                                                    ]
                                                                ]
                                                              ) ;
                                           rdf:type owl:Class
                                         ] ;
-                    rdfs:subClassOf :Aeroporto ;
-                    rdfs:comment "Aeroporto dotato di almeno un ufficio doganale. Equivalente a un aeroporto che ha almeno una dogana."@it ,
-                                 "Airport equipped with at least one customs office. Equivalent to an airport that has at least one customs."@en ;
+                    rdfs:subClassOf :Aeroporto ,
+                                    [ owl:intersectionOf ( :Aeroporto
+                                                           [ rdf:type owl:Restriction ;
+                                                             owl:onProperty :haTerminal ;
+                                                             owl:someValuesFrom [ owl:intersectionOf ( :Terminal
+                                                                                                       [ rdf:type owl:Restriction ;
+                                                                                                         owl:onProperty :haDogana ;
+                                                                                                         owl:someValuesFrom :Dogana
+                                                                                                       ]
+                                                                                                     ) ;
+                                                                                  rdf:type owl:Class
+                                                                                ]
+                                                           ]
+                                                         ) ;
+                                      rdf:type owl:Class
+                                    ] ,
+                                    [ rdf:type owl:Restriction ;
+                                      owl:onProperty :haTerminal ;
+                                      owl:someValuesFrom [ owl:intersectionOf ( :Terminal
+                                                                                [ rdf:type owl:Restriction ;
+                                                                                  owl:onProperty :haDogana ;
+                                                                                  owl:someValuesFrom :Dogana
+                                                                                ]
+                                                                              ) ;
+                                                           rdf:type owl:Class
+                                                         ]
+                                    ] ,
+                                    [ rdf:type owl:Restriction ;
+                                      owl:onProperty :haPista ;
+                                      owl:minQualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                                      owl:onClass :Pista
+                                    ] ,
+                                    [ rdf:type owl:Restriction ;
+                                      owl:onProperty :haTerminal ;
+                                      owl:minQualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                                      owl:onClass :Terminal
+                                    ] ,
+                                    [ rdf:type owl:Restriction ;
+                                      owl:onProperty :CodiceIATA ;
+                                      owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                                      owl:onDataRange xsd:string
+                                    ] ,
+                                    [ rdf:type owl:Restriction ;
+                                      owl:onProperty :CodiceICAO ;
+                                      owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                                      owl:onDataRange xsd:string
+                                    ] ;
+                    rdfs:comment "Aeroporto dotato di almeno una dogana di tipo Extra-Schengen. Utilizzato per classificare i voli extra-Schengen."@it ,
+                                 "Airport equipped with at least one Extra-Schengen customs office. Used to classify extra-Schengen flights."@en ;
                     rdfs:label "AeroportoConDogana"@it ,
-                               "Airport with Customs"@en .
+                               "Airport with Extra-Schengen Customs"@en .
 
 
 ###  http://www.semanticweb.org/sofia/ontologies/2026/acio/AeroportoMilitare
 :AeroportoMilitare rdf:type owl:Class ;
-                   rdfs:subClassOf :Aeroporto ;
+                   rdfs:subClassOf :Aeroporto ,
+                                   [ rdf:type owl:Restriction ;
+                                     owl:onProperty :haPista ;
+                                     owl:minQualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                                     owl:onClass :Pista
+                                   ] ,
+                                   [ rdf:type owl:Restriction ;
+                                     owl:onProperty :haTerminal ;
+                                     owl:minQualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                                     owl:onClass :Terminal
+                                   ] ,
+                                   [ rdf:type owl:Restriction ;
+                                     owl:onProperty :CodiceIATA ;
+                                     owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                                     owl:onDataRange xsd:string
+                                   ] ,
+                                   [ rdf:type owl:Restriction ;
+                                     owl:onProperty :CodiceICAO ;
+                                     owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                                     owl:onDataRange xsd:string
+                                   ] ;
                    rdfs:comment "Aeroporto destinato esclusivamente o prevalentemente al traffico militare."@it ,
                                 "Airport intended exclusively or mainly for military traffic."@en ;
                    rdfs:label "AeroportoMilitare"@it ,
@@ -504,7 +977,51 @@ xsd:gYear rdf:type rdfs:Datatype .
                                                           ) ;
                                        rdf:type owl:Class
                                      ] ;
-                 rdfs:subClassOf :Aeroporto ;
+                 rdfs:subClassOf :Aeroporto ,
+                                 [ owl:intersectionOf ( :Aeroporto
+                                                        [ rdf:type owl:Restriction ;
+                                                          owl:onProperty [ owl:inverseOf :parteDa
+                                                                         ] ;
+                                                          owl:someValuesFrom :VoloInternazionale
+                                                        ]
+                                                        [ rdf:type owl:Restriction ;
+                                                          owl:onProperty :haPista ;
+                                                          owl:minQualifiedCardinality "2"^^xsd:nonNegativeInteger ;
+                                                          owl:onClass :Pista
+                                                        ]
+                                                      ) ;
+                                   rdf:type owl:Class
+                                 ] ,
+                                 [ rdf:type owl:Restriction ;
+                                   owl:onProperty [ owl:inverseOf :parteDa
+                                                  ] ;
+                                   owl:someValuesFrom :VoloInternazionale
+                                 ] ,
+                                 [ rdf:type owl:Restriction ;
+                                   owl:onProperty :haPista ;
+                                   owl:minQualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                                   owl:onClass :Pista
+                                 ] ,
+                                 [ rdf:type owl:Restriction ;
+                                   owl:onProperty :haPista ;
+                                   owl:minQualifiedCardinality "2"^^xsd:nonNegativeInteger ;
+                                   owl:onClass :Pista
+                                 ] ,
+                                 [ rdf:type owl:Restriction ;
+                                   owl:onProperty :haTerminal ;
+                                   owl:minQualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                                   owl:onClass :Terminal
+                                 ] ,
+                                 [ rdf:type owl:Restriction ;
+                                   owl:onProperty :CodiceIATA ;
+                                   owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                                   owl:onDataRange xsd:string
+                                 ] ,
+                                 [ rdf:type owl:Restriction ;
+                                   owl:onProperty :CodiceICAO ;
+                                   owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                                   owl:onDataRange xsd:string
+                                 ] ;
                  rdfs:comment "Aeroporto che funge da nodo principale per i voli internazionali, dotato di almeno due piste."@it ,
                               "Airport that acts as a main hub for international flights, equipped with at least two runways."@en ;
                  rdfs:label "Airport Hub"@en ,
@@ -570,11 +1087,89 @@ xsd:gYear rdf:type rdfs:Datatype .
                    owl:equivalentClass [ owl:intersectionOf ( :VoloInternazionale
                                                               [ rdf:type owl:Restriction ;
                                                                 owl:onProperty :arrivaA ;
-                                                                owl:someValuesFrom :AeroportoConDogana
+                                                                owl:someValuesFrom [ owl:intersectionOf ( :Aeroporto
+                                                                                                          [ rdf:type owl:Restriction ;
+                                                                                                            owl:onProperty :haTerminal ;
+                                                                                                            owl:someValuesFrom [ owl:intersectionOf ( :Terminal
+                                                                                                                                                      [ rdf:type owl:Restriction ;
+                                                                                                                                                        owl:onProperty :haDogana ;
+                                                                                                                                                        owl:someValuesFrom [ owl:intersectionOf ( :Dogana
+                                                                                                                                                                                                  [ rdf:type owl:Restriction ;
+                                                                                                                                                                                                    owl:onProperty :haTipoZona ;
+                                                                                                                                                                                                    owl:hasValue :ZonaExtraSchengen
+                                                                                                                                                                                                  ]
+                                                                                                                                                                                                ) ;
+                                                                                                                                                                             rdf:type owl:Class
+                                                                                                                                                                           ]
+                                                                                                                                                      ]
+                                                                                                                                                    ) ;
+                                                                                                                                 rdf:type owl:Class
+                                                                                                                               ]
+                                                                                                          ]
+                                                                                                        ) ;
+                                                                                     rdf:type owl:Class
+                                                                                   ]
                                                               ]
                                                             ) ;
                                          rdf:type owl:Class
                                        ] ;
+                   rdfs:subClassOf :Volo ,
+                                   :VoloInternazionale ,
+                                   [ owl:intersectionOf ( :VoloInternazionale
+                                                          [ rdf:type owl:Restriction ;
+                                                            owl:onProperty :arrivaA ;
+                                                            owl:someValuesFrom [ owl:intersectionOf ( :Aeroporto
+                                                                                                      [ rdf:type owl:Restriction ;
+                                                                                                        owl:onProperty :haTerminal ;
+                                                                                                        owl:someValuesFrom [ owl:intersectionOf ( :Terminal
+                                                                                                                                                  [ rdf:type owl:Restriction ;
+                                                                                                                                                    owl:onProperty :haDogana ;
+                                                                                                                                                    owl:someValuesFrom [ owl:intersectionOf ( :Dogana
+                                                                                                                                                                                              [ rdf:type owl:Restriction ;
+                                                                                                                                                                                                owl:onProperty :haTipoZona ;
+                                                                                                                                                                                                owl:hasValue :ZonaExtraSchengen
+                                                                                                                                                                                              ]
+                                                                                                                                                                                            ) ;
+                                                                                                                                                                         rdf:type owl:Class
+                                                                                                                                                                       ]
+                                                                                                                                                  ]
+                                                                                                                                                ) ;
+                                                                                                                             rdf:type owl:Class
+                                                                                                                           ]
+                                                                                                      ]
+                                                                                                    ) ;
+                                                                                 rdf:type owl:Class
+                                                                               ]
+                                                          ]
+                                                        ) ;
+                                     rdf:type owl:Class
+                                   ] ,
+                                   [ rdf:type owl:Restriction ;
+                                     owl:onProperty :arrivaA ;
+                                     owl:someValuesFrom [ owl:intersectionOf ( :Aeroporto
+                                                                               [ rdf:type owl:Restriction ;
+                                                                                 owl:onProperty :haTerminal ;
+                                                                                 owl:someValuesFrom [ owl:intersectionOf ( :Terminal
+                                                                                                                           [ rdf:type owl:Restriction ;
+                                                                                                                             owl:onProperty :haDogana ;
+                                                                                                                             owl:someValuesFrom [ owl:intersectionOf ( :Dogana
+                                                                                                                                                                       [ rdf:type owl:Restriction ;
+                                                                                                                                                                         owl:onProperty :haTipoZona ;
+                                                                                                                                                                         owl:hasValue :ZonaExtraSchengen
+                                                                                                                                                                       ]
+                                                                                                                                                                     ) ;
+                                                                                                                                                  rdf:type owl:Class
+                                                                                                                                                ]
+                                                                                                                           ]
+                                                                                                                         ) ;
+                                                                                                      rdf:type owl:Class
+                                                                                                    ]
+                                                                               ]
+                                                                             ) ;
+                                                          rdf:type owl:Class
+                                                        ]
+                                   ] ;
+                   owl:disjointWith :VoloSchengen ;
                    rdfs:comment "International flight arriving at an airport with customs, i.e. with a destination outside the Schengen area."@en ,
                                 "Volo internazionale che arriva in un aeroporto dotato di dogana, ovvero con destinazione fuori dalla zona Schengen."@it ;
                    rdfs:label "Extra-Schengen Flight"@en ,
@@ -583,7 +1178,63 @@ xsd:gYear rdf:type rdfs:Datatype .
 
 ###  http://www.semanticweb.org/sofia/ontologies/2026/acio/VoloIntercontinentale
 :VoloIntercontinentale rdf:type owl:Class ;
-                       rdfs:subClassOf :VoloExtraSchengen ;
+                       rdfs:subClassOf :Volo ,
+                                       :VoloExtraSchengen ,
+                                       :VoloInternazionale ,
+                                       [ owl:intersectionOf ( :VoloInternazionale
+                                                              [ rdf:type owl:Restriction ;
+                                                                owl:onProperty :arrivaA ;
+                                                                owl:someValuesFrom [ owl:intersectionOf ( :Aeroporto
+                                                                                                          [ rdf:type owl:Restriction ;
+                                                                                                            owl:onProperty :haTerminal ;
+                                                                                                            owl:someValuesFrom [ owl:intersectionOf ( :Terminal
+                                                                                                                                                      [ rdf:type owl:Restriction ;
+                                                                                                                                                        owl:onProperty :haDogana ;
+                                                                                                                                                        owl:someValuesFrom [ owl:intersectionOf ( :Dogana
+                                                                                                                                                                                                  [ rdf:type owl:Restriction ;
+                                                                                                                                                                                                    owl:onProperty :haTipoZona ;
+                                                                                                                                                                                                    owl:hasValue :ZonaExtraSchengen
+                                                                                                                                                                                                  ]
+                                                                                                                                                                                                ) ;
+                                                                                                                                                                             rdf:type owl:Class
+                                                                                                                                                                           ]
+                                                                                                                                                      ]
+                                                                                                                                                    ) ;
+                                                                                                                                 rdf:type owl:Class
+                                                                                                                               ]
+                                                                                                          ]
+                                                                                                        ) ;
+                                                                                     rdf:type owl:Class
+                                                                                   ]
+                                                              ]
+                                                            ) ;
+                                         rdf:type owl:Class
+                                       ] ,
+                                       [ rdf:type owl:Restriction ;
+                                         owl:onProperty :arrivaA ;
+                                         owl:someValuesFrom [ owl:intersectionOf ( :Aeroporto
+                                                                                   [ rdf:type owl:Restriction ;
+                                                                                     owl:onProperty :haTerminal ;
+                                                                                     owl:someValuesFrom [ owl:intersectionOf ( :Terminal
+                                                                                                                               [ rdf:type owl:Restriction ;
+                                                                                                                                 owl:onProperty :haDogana ;
+                                                                                                                                 owl:someValuesFrom [ owl:intersectionOf ( :Dogana
+                                                                                                                                                                           [ rdf:type owl:Restriction ;
+                                                                                                                                                                             owl:onProperty :haTipoZona ;
+                                                                                                                                                                             owl:hasValue :ZonaExtraSchengen
+                                                                                                                                                                           ]
+                                                                                                                                                                         ) ;
+                                                                                                                                                      rdf:type owl:Class
+                                                                                                                                                    ]
+                                                                                                                               ]
+                                                                                                                             ) ;
+                                                                                                          rdf:type owl:Class
+                                                                                                        ]
+                                                                                   ]
+                                                                                 ) ;
+                                                              rdf:type owl:Class
+                                                            ]
+                                       ] ;
                        rdfs:comment "Extra-Schengen flight connecting airports on different continents."@en ,
                                     "Volo extra-Schengen che collega aeroporti su continenti diversi."@it ;
                        rdfs:label "Intercontinental Flight"@en ,
@@ -610,7 +1261,8 @@ xsd:gYear rdf:type rdfs:Datatype .
 
 ###  http://www.semanticweb.org/sofia/ontologies/2026/acio/VoloSchengen
 :VoloSchengen rdf:type owl:Class ;
-              rdfs:subClassOf :VoloInternazionale ;
+              rdfs:subClassOf :Volo ,
+                              :VoloInternazionale ;
               rdfs:comment "International flight between countries belonging to the Schengen area, without customs controls at internal borders."@en ,
                            "Volo internazionale tra paesi appartenenti alla zona Schengen, senza controlli doganali alle frontiere interne."@it ;
               rdfs:label "Schengen Flight"@en ,
@@ -625,6 +1277,12 @@ xsd:gYear rdf:type rdfs:Datatype .
                                                 :ZonaTransito
                                               )
                                   ] ;
+              rdfs:subClassOf [ rdf:type owl:Class ;
+                                owl:oneOf ( :ZonaExtraSchengen
+                                            :ZonaSchengen
+                                            :ZonaTransito
+                                          )
+                              ] ;
               rdfs:comment "Tipo di zona doganale aeroportuale. Può essere Schengen, Extra-Schengen o Transito. Definita per enumerazione."@it ,
                            "Type of airport customs zone. Can be Schengen, Extra-Schengen or Transit. Defined by enumeration."@en ;
               rdfs:label "Customs Zone"@en ,
@@ -635,8 +1293,38 @@ xsd:gYear rdf:type rdfs:Datatype .
 #    Individuals
 #################################################################
 
+###  http://www.semanticweb.org/sofia/ontologies/2026/acio/ADR
+:ADR rdf:type owl:NamedIndividual ,
+              :AutoritàAeroportuale ;
+     :gestisce :FCO ;
+     rdfs:label "ADR"@it ,
+                "ADR - Aeroporti di Roma"@en .
+
+
+###  http://www.semanticweb.org/sofia/ontologies/2026/acio/AENA
+:AENA rdf:type owl:NamedIndividual ,
+               :AutoritàAeroportuale ;
+      :gestisce :BCN ;
+      rdfs:label "AENA"@it ,
+                 "AENA - Aeropuertos Españoles"@en .
+
+
+###  http://www.semanticweb.org/sofia/ontologies/2026/acio/AZ202
+:AZ202 rdf:type owl:NamedIndividual ,
+                :Volo ,
+                :VoloInternazionale ,
+                :VoloSchengen ;
+       :arrivaA :BCN ;
+       :operatoDa :ITAAirways ;
+       :parteDa :FCO ;
+       :OrarioPartenzaSchedulato "2026-05-07T09:15:00"^^xsd:dateTime ;
+       rdfs:label "AZ202"@en ,
+                  "AZ202"@it .
+
+
 ###  http://www.semanticweb.org/sofia/ontologies/2026/acio/AZ610
 :AZ610 rdf:type owl:NamedIndividual ,
+                :Volo ,
                 :VoloInterno ;
        :arrivaA :FCO ;
        :operatoDa :ITAAirways ;
@@ -648,18 +1336,173 @@ xsd:gYear rdf:type rdfs:Datatype .
                   "AZ610"@it .
 
 
+###  http://www.semanticweb.org/sofia/ontologies/2026/acio/BCN
+:BCN rdf:type owl:NamedIndividual ,
+              :Aeroporto ,
+              :AeroportoCivile ,
+              [ owl:intersectionOf ( :Aeroporto
+                                     [ rdf:type owl:Restriction ;
+                                       owl:onProperty [ owl:inverseOf :parteDa
+                                                      ] ;
+                                       owl:someValuesFrom :VoloInternazionale
+                                     ]
+                                     [ rdf:type owl:Restriction ;
+                                       owl:onProperty :haPista ;
+                                       owl:minQualifiedCardinality "2"^^xsd:nonNegativeInteger ;
+                                       owl:onClass :Pista
+                                     ]
+                                   ) ;
+                rdf:type owl:Class
+              ] ,
+              [ rdf:type owl:Restriction ;
+                owl:onProperty [ owl:inverseOf :parteDa
+                               ] ;
+                owl:someValuesFrom :VoloInternazionale
+              ] ,
+              [ rdf:type owl:Restriction ;
+                owl:onProperty :haPista ;
+                owl:minQualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                owl:onClass :Pista
+              ] ,
+              [ rdf:type owl:Restriction ;
+                owl:onProperty :haPista ;
+                owl:minQualifiedCardinality "2"^^xsd:nonNegativeInteger ;
+                owl:onClass :Pista
+              ] ,
+              [ rdf:type owl:Restriction ;
+                owl:onProperty :haTerminal ;
+                owl:minQualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                owl:onClass :Terminal
+              ] ,
+              [ rdf:type owl:Restriction ;
+                owl:onProperty :CodiceIATA ;
+                owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                owl:onDataRange xsd:string
+              ] ,
+              [ rdf:type owl:Restriction ;
+                owl:onProperty :CodiceICAO ;
+                owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                owl:onDataRange xsd:string
+              ] ;
+     :collegatoCon :BCN ,
+                   :DXB ,
+                   :FCO ,
+                   :MXP ;
+     :gestitoDa :AENA ;
+     :haPista :Pista1BCN ,
+              :Pista2BCN ;
+     :haTerminal :Terminal1BCN ;
+     :haVolo :VY3211 ;
+     :situatoInCittà :Barcellona ;
+     :CodiceIATA "BCN" ;
+     :CodiceICAO "LEBL" ;
+     :PasseggeriAnnui 52000000 .
+
+
+###  http://www.semanticweb.org/sofia/ontologies/2026/acio/Barcellona
+:Barcellona rdf:type owl:NamedIndividual ,
+                     :Città ;
+            :cittàInNazione :Spagna ;
+            :NomeComune "Barcellona" ;
+            :Popolazione 1620000 ;
+            rdfs:label "Barcellona"@it ,
+                       "Barcelona"@en .
+
+
+###  http://www.semanticweb.org/sofia/ontologies/2026/acio/DAEG
+:DAEG rdf:type owl:NamedIndividual ,
+               :AutoritàAeroportuale ;
+      :gestisce :DXB ;
+      rdfs:label "DAEG"@it ,
+                 "Dubai Airports Engineering Group"@en .
+
+
 ###  http://www.semanticweb.org/sofia/ontologies/2026/acio/DXB
 :DXB rdf:type owl:NamedIndividual ,
-              :Aeroporto ;
+              :Aeroporto ,
+              :AeroportoCivile ,
+              [ owl:intersectionOf ( :Aeroporto
+                                     [ rdf:type owl:Restriction ;
+                                       owl:onProperty [ owl:inverseOf :parteDa
+                                                      ] ;
+                                       owl:someValuesFrom :VoloInternazionale
+                                     ]
+                                     [ rdf:type owl:Restriction ;
+                                       owl:onProperty :haPista ;
+                                       owl:minQualifiedCardinality "2"^^xsd:nonNegativeInteger ;
+                                       owl:onClass :Pista
+                                     ]
+                                   ) ;
+                rdf:type owl:Class
+              ] ,
+              [ rdf:type owl:Restriction ;
+                owl:onProperty [ owl:inverseOf :parteDa
+                               ] ;
+                owl:someValuesFrom :VoloInternazionale
+              ] ,
+              [ rdf:type owl:Restriction ;
+                owl:onProperty :haPista ;
+                owl:minQualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                owl:onClass :Pista
+              ] ,
+              [ rdf:type owl:Restriction ;
+                owl:onProperty :haPista ;
+                owl:minQualifiedCardinality "2"^^xsd:nonNegativeInteger ;
+                owl:onClass :Pista
+              ] ,
+              [ rdf:type owl:Restriction ;
+                owl:onProperty :haTerminal ;
+                owl:minQualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                owl:onClass :Terminal
+              ] ,
+              [ rdf:type owl:Restriction ;
+                owl:onProperty :CodiceIATA ;
+                owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                owl:onDataRange xsd:string
+              ] ,
+              [ rdf:type owl:Restriction ;
+                owl:onProperty :CodiceICAO ;
+                owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                owl:onDataRange xsd:string
+              ] ;
+     :collegatoCon :BCN ,
+                   :DXB ,
+                   :FCO ,
+                   :MXP ;
+     :gestitoDa :DAEG ;
+     :haPista :Pista1DXB ,
+              :Pista2DXB ;
+     :haTerminal :Terminal1DXB ;
+     :situatoInCittà :Dubai ;
+     :CodiceIATA "DXB" ;
+     :CodiceICAO "OMDB" ;
+     :PasseggeriAnnui 86000000 ;
      rdfs:comment "Aeroporto internazionale di Dubai, identificato dal codice IATA DXB."@it ,
                   "Dubai International Airport, identified by IATA code DXB."@en ;
      rdfs:label "DXB"@it ,
                 "Dubai International Airport"@en .
 
 
+###  http://www.semanticweb.org/sofia/ontologies/2026/acio/DoganaBCN
+:DoganaBCN rdf:type owl:NamedIndividual ,
+                    :Dogana ;
+           :haTipoZona :ZonaSchengen ;
+           rdfs:label "BCN Customs"@en ,
+                      "DoganaBCN"@it .
+
+
+###  http://www.semanticweb.org/sofia/ontologies/2026/acio/DoganaDXB
+:DoganaDXB rdf:type owl:NamedIndividual ,
+                    :Dogana ;
+           :haTipoZona :ZonaExtraSchengen ;
+           rdfs:label "DXB Customs"@en ,
+                      "DoganaDXB"@it .
+
+
 ###  http://www.semanticweb.org/sofia/ontologies/2026/acio/DoganaFCO
 :DoganaFCO rdf:type owl:NamedIndividual ,
                     :Dogana ;
+           :haTipoZona :ZonaExtraSchengen ;
            rdfs:comment "Customs office of Rome Fiumicino Airport (FCO)."@en ,
                         "Ufficio doganale dell'aeroporto di Roma Fiumicino (FCO)."@it ;
            rdfs:label "DoganaFCO"@it ,
@@ -669,42 +1512,268 @@ xsd:gYear rdf:type rdfs:Datatype .
 ###  http://www.semanticweb.org/sofia/ontologies/2026/acio/DoganaT1MXP
 :DoganaT1MXP rdf:type owl:NamedIndividual ,
                       :Dogana ;
+             :haTipoZona :ZonaSchengen ;
              rdfs:comment "Customs office of Terminal 1 at Milan Malpensa Airport (MXP)."@en ,
                           "Ufficio doganale del Terminal 1 dell'aeroporto di Milano Malpensa (MXP)."@it ;
              rdfs:label "DoganaT1MXP"@it ,
                         "MXP Terminal 1 Customs"@en .
 
 
-###  http://www.semanticweb.org/sofia/ontologies/2026/acio/EK205
-:EK205 rdf:type owl:NamedIndividual ,
-                :VoloInternazionale ;
-       :arrivaA :FCO ;
+###  http://www.semanticweb.org/sofia/ontologies/2026/acio/DoganaT2MXP
+:DoganaT2MXP rdf:type owl:NamedIndividual ,
+                      :Dogana ;
+             :haTipoZona :ZonaSchengen .
+
+
+###  http://www.semanticweb.org/sofia/ontologies/2026/acio/Dubai
+:Dubai rdf:type owl:NamedIndividual ,
+                :Città ;
+       :cittàInNazione :EmiratiArabiUniti ;
+       :NomeComune "Dubai" ;
+       :Popolazione 3500000 ;
+       rdfs:label "Dubai"@en ,
+                  "Dubai"@it .
+
+
+###  http://www.semanticweb.org/sofia/ontologies/2026/acio/EK001
+:EK001 rdf:type owl:NamedIndividual ,
+                :Volo ,
+                :VoloExtraSchengen ,
+                :VoloIntercontinentale ,
+                :VoloInternazionale ,
+                [ owl:intersectionOf ( :VoloInternazionale
+                                       [ rdf:type owl:Restriction ;
+                                         owl:onProperty :arrivaA ;
+                                         owl:someValuesFrom [ owl:intersectionOf ( :Aeroporto
+                                                                                   [ rdf:type owl:Restriction ;
+                                                                                     owl:onProperty :haTerminal ;
+                                                                                     owl:someValuesFrom [ owl:intersectionOf ( :Terminal
+                                                                                                                               [ rdf:type owl:Restriction ;
+                                                                                                                                 owl:onProperty :haDogana ;
+                                                                                                                                 owl:someValuesFrom [ owl:intersectionOf ( :Dogana
+                                                                                                                                                                           [ rdf:type owl:Restriction ;
+                                                                                                                                                                             owl:onProperty :haTipoZona ;
+                                                                                                                                                                             owl:hasValue :ZonaExtraSchengen
+                                                                                                                                                                           ]
+                                                                                                                                                                         ) ;
+                                                                                                                                                      rdf:type owl:Class
+                                                                                                                                                    ]
+                                                                                                                               ]
+                                                                                                                             ) ;
+                                                                                                          rdf:type owl:Class
+                                                                                                        ]
+                                                                                   ]
+                                                                                 ) ;
+                                                              rdf:type owl:Class
+                                                            ]
+                                       ]
+                                     ) ;
+                  rdf:type owl:Class
+                ] ,
+                [ rdf:type owl:Restriction ;
+                  owl:onProperty :arrivaA ;
+                  owl:someValuesFrom [ owl:intersectionOf ( :Aeroporto
+                                                            [ rdf:type owl:Restriction ;
+                                                              owl:onProperty :haTerminal ;
+                                                              owl:someValuesFrom [ owl:intersectionOf ( :Terminal
+                                                                                                        [ rdf:type owl:Restriction ;
+                                                                                                          owl:onProperty :haDogana ;
+                                                                                                          owl:someValuesFrom [ owl:intersectionOf ( :Dogana
+                                                                                                                                                    [ rdf:type owl:Restriction ;
+                                                                                                                                                      owl:onProperty :haTipoZona ;
+                                                                                                                                                      owl:hasValue :ZonaExtraSchengen
+                                                                                                                                                    ]
+                                                                                                                                                  ) ;
+                                                                                                                               rdf:type owl:Class
+                                                                                                                             ]
+                                                                                                        ]
+                                                                                                      ) ;
+                                                                                   rdf:type owl:Class
+                                                                                 ]
+                                                            ]
+                                                          ) ;
+                                       rdf:type owl:Class
+                                     ]
+                ] ;
+       :arrivaA :DXB ;
        :operatoDa :Emirates ;
        :parteDa :MXP ;
-       rdfs:comment "Emirates international flight from Milan Malpensa (MXP) to Rome Fiumicino (FCO)."@en ,
-                    "Volo internazionale Emirates da Milano Malpensa (MXP) a Roma Fiumicino (FCO)."@it ;
-       rdfs:label "EK205"@en ,
-                  "EK205"@it .
+       :OrarioPartenzaSchedulato "2026-05-07T14:00:00"^^xsd:dateTime ;
+       rdfs:label "EK001"@en ,
+                  "EK001"@it .
+
+
+###  http://www.semanticweb.org/sofia/ontologies/2026/acio/EK205
+:EK205 rdf:type owl:NamedIndividual ,
+                :Volo ,
+                :VoloInternazionale ;
+       :arrivaA :DXB ;
+       :operatoDa :Emirates ;
+       :parteDa :MXP .
+
+
+###  http://www.semanticweb.org/sofia/ontologies/2026/acio/EK450
+:EK450 rdf:type owl:NamedIndividual ,
+                :Volo ,
+                :VoloExtraSchengen ,
+                :VoloIntercontinentale ,
+                :VoloInternazionale ,
+                [ owl:intersectionOf ( :VoloInternazionale
+                                       [ rdf:type owl:Restriction ;
+                                         owl:onProperty :arrivaA ;
+                                         owl:someValuesFrom [ owl:intersectionOf ( :Aeroporto
+                                                                                   [ rdf:type owl:Restriction ;
+                                                                                     owl:onProperty :haTerminal ;
+                                                                                     owl:someValuesFrom [ owl:intersectionOf ( :Terminal
+                                                                                                                               [ rdf:type owl:Restriction ;
+                                                                                                                                 owl:onProperty :haDogana ;
+                                                                                                                                 owl:someValuesFrom [ owl:intersectionOf ( :Dogana
+                                                                                                                                                                           [ rdf:type owl:Restriction ;
+                                                                                                                                                                             owl:onProperty :haTipoZona ;
+                                                                                                                                                                             owl:hasValue :ZonaExtraSchengen
+                                                                                                                                                                           ]
+                                                                                                                                                                         ) ;
+                                                                                                                                                      rdf:type owl:Class
+                                                                                                                                                    ]
+                                                                                                                               ]
+                                                                                                                             ) ;
+                                                                                                          rdf:type owl:Class
+                                                                                                        ]
+                                                                                   ]
+                                                                                 ) ;
+                                                              rdf:type owl:Class
+                                                            ]
+                                       ]
+                                     ) ;
+                  rdf:type owl:Class
+                ] ,
+                [ rdf:type owl:Restriction ;
+                  owl:onProperty :arrivaA ;
+                  owl:someValuesFrom [ owl:intersectionOf ( :Aeroporto
+                                                            [ rdf:type owl:Restriction ;
+                                                              owl:onProperty :haTerminal ;
+                                                              owl:someValuesFrom [ owl:intersectionOf ( :Terminal
+                                                                                                        [ rdf:type owl:Restriction ;
+                                                                                                          owl:onProperty :haDogana ;
+                                                                                                          owl:someValuesFrom [ owl:intersectionOf ( :Dogana
+                                                                                                                                                    [ rdf:type owl:Restriction ;
+                                                                                                                                                      owl:onProperty :haTipoZona ;
+                                                                                                                                                      owl:hasValue :ZonaExtraSchengen
+                                                                                                                                                    ]
+                                                                                                                                                  ) ;
+                                                                                                                               rdf:type owl:Class
+                                                                                                                             ]
+                                                                                                        ]
+                                                                                                      ) ;
+                                                                                   rdf:type owl:Class
+                                                                                 ]
+                                                            ]
+                                                          ) ;
+                                       rdf:type owl:Class
+                                     ]
+                ] ;
+       :arrivaA :DXB ;
+       :operatoDa :Emirates ;
+       :parteDa :FCO ;
+       :OrarioPartenzaSchedulato "2026-05-07T16:45:00"^^xsd:dateTime ;
+       rdfs:label "EK450"@en ,
+                  "EK450"@it .
 
 
 ###  http://www.semanticweb.org/sofia/ontologies/2026/acio/Emirates
 :Emirates rdf:type owl:NamedIndividual ,
                    :CompagniaAerea ;
-          owl:differentFrom :ITAAirways ;
+          :voloOperatoDa :EK001 ,
+                         :EK205 ,
+                         :EK450 ;
           rdfs:comment "Compagnia aerea internazionale con sede a Dubai, Emirati Arabi Uniti."@it ,
                        "International airline headquartered in Dubai, United Arab Emirates."@en ;
           rdfs:label "Emirates"@en ,
                      "Emirates"@it .
 
 
+###  http://www.semanticweb.org/sofia/ontologies/2026/acio/EmiratiArabiUniti
+:EmiratiArabiUniti rdf:type owl:NamedIndividual ,
+                            :Nazione ,
+                            [ rdf:type owl:Restriction ;
+                              owl:onProperty :CodiceISO ;
+                              owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                              owl:onDataRange xsd:string
+                            ] ;
+                   :CodiceISO "AE" ;
+                   :InZonaSchengen "false"^^xsd:boolean ;
+                   :NomeNazione "Emirati Arabi Uniti" ;
+                   rdfs:label "EmiratiArabiUniti"@it ,
+                              "United Arab Emirates"@en .
+
+
 ###  http://www.semanticweb.org/sofia/ontologies/2026/acio/FCO
 :FCO rdf:type owl:NamedIndividual ,
-              :Aeroporto ;
-     :haDogana :DoganaFCO ;
+              :Aeroporto ,
+              :AeroportoCivile ,
+              [ rdf:type owl:Restriction ;
+                owl:onProperty :haPista ;
+                owl:minQualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                owl:onClass :Pista
+              ] ,
+              [ rdf:type owl:Restriction ;
+                owl:onProperty :haTerminal ;
+                owl:minQualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                owl:onClass :Terminal
+              ] ,
+              [ rdf:type owl:Restriction ;
+                owl:onProperty :CodiceIATA ;
+                owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                owl:onDataRange xsd:string
+              ] ,
+              [ rdf:type owl:Restriction ;
+                owl:onProperty :CodiceICAO ;
+                owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                owl:onDataRange xsd:string
+              ] ;
+     :collegatoCon :BCN ,
+                   :DXB ,
+                   :FCO ,
+                   :MXP ;
+     :gestitoDa :ADR ;
+     :haPista :Pista1FCO ,
+              :Pista2FCO ,
+              :Pista3FCO ,
+              :Pista4FCO ;
+     :haTerminal :Terminal1FCO ,
+                 :Terminal2FCO ,
+                 :Terminal3FCO ;
+     :haVolo :AZ202 ,
+             :EK450 ;
+     :situatoInCittà :Roma ;
+     :CodiceIATA "FCO" ;
+     :CodiceICAO "LIRF" ;
+     :PasseggeriAnnui 40000000 ;
      rdfs:comment "Aeroporto internazionale Leonardo da Vinci di Roma Fiumicino, principale scalo italiano, identificato dal codice IATA FCO."@it ,
                   "Rome Fiumicino Leonardo da Vinci International Airport, main Italian hub, identified by IATA code FCO."@en ;
      rdfs:label "FCO"@it ,
                 "Rome Fiumicino Airport"@en .
+
+
+###  http://www.semanticweb.org/sofia/ontologies/2026/acio/Gate1T1BCN
+:Gate1T1BCN rdf:type owl:NamedIndividual ,
+                     :Gate ;
+            rdfs:label "Gate 1 Terminal 1 BCN"@en ,
+                       "Gate1T1BCN"@it .
+
+
+###  http://www.semanticweb.org/sofia/ontologies/2026/acio/Gate1T1DXB
+:Gate1T1DXB rdf:type owl:NamedIndividual ,
+                     :Gate ;
+            rdfs:label "Gate 1 Terminal 1 DXB"@en ,
+                       "Gate1T1DXB"@it .
+
+
+###  http://www.semanticweb.org/sofia/ontologies/2026/acio/Gate1T1FCO
+:Gate1T1FCO rdf:type owl:NamedIndividual ,
+                     :Gate ;
+            rdfs:label "Gate 1 Terminal 1 FCO"@en ,
+                       "Gate1T1FCO"@it .
 
 
 ###  http://www.semanticweb.org/sofia/ontologies/2026/acio/Gate1T1MXP
@@ -716,9 +1785,55 @@ xsd:gYear rdf:type rdfs:Datatype .
                        "Gate1T1MXP"@it .
 
 
+###  http://www.semanticweb.org/sofia/ontologies/2026/acio/Gate1T2FCO
+:Gate1T2FCO rdf:type owl:NamedIndividual ,
+                     :Gate ;
+            rdfs:comment "Gate 1 del Terminal 2 dell'aeroporto di Roma Fiumicino (FCO)."@it ,
+                         "Gate 1 of Terminal 2 at Rome Fiumicino Airport (FCO)."@en ;
+            rdfs:label "Gate 1 Terminal 2 FCO"@en ,
+                       "Gate1T2FCO"@it .
+
+
+###  http://www.semanticweb.org/sofia/ontologies/2026/acio/Gate1T2MXP
+:Gate1T2MXP rdf:type owl:NamedIndividual ,
+                     :Gate ;
+            rdfs:label "Gate 1 Terminal 2 MXP"@en ,
+                       "Gate1T2MXP"@it .
+
+
+###  http://www.semanticweb.org/sofia/ontologies/2026/acio/Gate1T3FCO
+:Gate1T3FCO rdf:type owl:NamedIndividual ,
+                     :Gate ;
+            rdfs:label "Gate 1 Terminal 3 FCO"@en ,
+                       "Gate1T3FCO"@it .
+
+
+###  http://www.semanticweb.org/sofia/ontologies/2026/acio/Gate2T1DXB
+:Gate2T1DXB rdf:type owl:NamedIndividual ,
+                     :Gate ;
+            rdfs:label "Gate 2 Terminal 1 DXB"@en ,
+                       "Gate2T1DXB"@it .
+
+
+###  http://www.semanticweb.org/sofia/ontologies/2026/acio/Gate2T1FCO
+:Gate2T1FCO rdf:type owl:NamedIndividual ,
+                     :Gate ;
+            rdfs:label "Gate 2 Terminal 1 FCO"@en ,
+                       "Gate2T1FCO"@it .
+
+
+###  http://www.semanticweb.org/sofia/ontologies/2026/acio/Gate2T1MXP
+:Gate2T1MXP rdf:type owl:NamedIndividual ,
+                     :Gate ;
+            rdfs:label "Gate 2 Terminal 1 MXP"@en ,
+                       "Gate2T1MXP"@it .
+
+
 ###  http://www.semanticweb.org/sofia/ontologies/2026/acio/ITAAirways
 :ITAAirways rdf:type owl:NamedIndividual ,
                      :CompagniaAerea ;
+            :voloOperatoDa :AZ202 ,
+                           :AZ610 ;
             rdfs:comment "Compagnia aerea di bandiera italiana, successore di Alitalia."@it ,
                          "Italian national airline, successor to Alitalia."@en ;
             rdfs:label "ITA Airways"@en ,
@@ -727,20 +1842,73 @@ xsd:gYear rdf:type rdfs:Datatype .
 
 ###  http://www.semanticweb.org/sofia/ontologies/2026/acio/Italia
 :Italia rdf:type owl:NamedIndividual ,
-                 :Nazione ;
+                 :Nazione ,
+                 [ rdf:type owl:Restriction ;
+                   owl:onProperty :CodiceISO ;
+                   owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                   owl:onDataRange xsd:string
+                 ] ;
+        :CodiceISO "IT" ;
+        :InZonaSchengen "true"^^xsd:boolean ;
+        :NomeNazione "Italia" ;
         rdfs:comment "Italian Republic, nation in southern Europe."@en ,
                      "Repubblica Italiana, nazione dell'Europa meridionale."@it ;
         rdfs:label "Italia"@it ,
                    "Italy"@en .
 
 
+###  http://www.semanticweb.org/sofia/ontologies/2026/acio/LoungeT1MXP
+:LoungeT1MXP rdf:type owl:NamedIndividual ,
+                      :Lounge ;
+             owl:differentFrom :LoungeT3FCO ;
+             rdfs:label "Lounge Terminal 1 MXP"@en ,
+                        "LoungeT1MXP"@it .
+
+
+###  http://www.semanticweb.org/sofia/ontologies/2026/acio/LoungeT3FCO
+:LoungeT3FCO rdf:type owl:NamedIndividual ,
+                      :Lounge ;
+             rdfs:label "Lounge Terminal 3 FCO"@en ,
+                        "LoungeT3FCO"@it .
+
+
 ###  http://www.semanticweb.org/sofia/ontologies/2026/acio/MXP
 :MXP rdf:type owl:NamedIndividual ,
-              :Aeroporto ;
+              :Aeroporto ,
+              :AeroportoCivile ,
+              [ rdf:type owl:Restriction ;
+                owl:onProperty :haPista ;
+                owl:minQualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                owl:onClass :Pista
+              ] ,
+              [ rdf:type owl:Restriction ;
+                owl:onProperty :haTerminal ;
+                owl:minQualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                owl:onClass :Terminal
+              ] ,
+              [ rdf:type owl:Restriction ;
+                owl:onProperty :CodiceIATA ;
+                owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                owl:onDataRange xsd:string
+              ] ,
+              [ rdf:type owl:Restriction ;
+                owl:onProperty :CodiceICAO ;
+                owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                owl:onDataRange xsd:string
+              ] ;
+     :collegatoCon :BCN ,
+                   :DXB ,
+                   :FCO ,
+                   :MXP ;
+     :gestitoDa :SEA ;
      :haPista :Pista1MXP ,
               :Pista2MXP ;
      :haTerminal :Terminal1MXP ,
                  :Terminal2MXP ;
+     :haVolo :AZ610 ,
+             :EK001 ,
+             :EK205 ,
+             :VY3210 ;
      :situatoInCittà :Milano ;
      :CodiceIATA "MXP" ;
      :CodiceICAO "LIMC" ;
@@ -755,10 +1923,28 @@ xsd:gYear rdf:type rdfs:Datatype .
 :Milano rdf:type owl:NamedIndividual ,
                  :Città ;
         :cittàInNazione :Italia ;
+        :NomeComune "Milano" ;
+        :Popolazione 1340000 ;
         rdfs:comment "Città metropolitana nel nord Italia, sede dell'aeroporto di Malpensa."@it ,
                      "Metropolitan city in northern Italy, home of Malpensa Airport."@en ;
         rdfs:label "Milan"@en ,
                    "Milano"@it .
+
+
+###  http://www.semanticweb.org/sofia/ontologies/2026/acio/Pista1BCN
+:Pista1BCN rdf:type owl:NamedIndividual ,
+                    :Pista ;
+           :LunghezzaMetri 3743 ;
+           rdfs:label "Pista1BCN"@it ,
+                      "Runway 1 BCN"@en .
+
+
+###  http://www.semanticweb.org/sofia/ontologies/2026/acio/Pista1DXB
+:Pista1DXB rdf:type owl:NamedIndividual ,
+                    :Pista ;
+           :LunghezzaMetri 4000 ;
+           rdfs:label "Pista1DXB"@it ,
+                      "Runway 1 DXB"@en .
 
 
 ###  http://www.semanticweb.org/sofia/ontologies/2026/acio/Pista1FCO
@@ -777,6 +1963,22 @@ xsd:gYear rdf:type rdfs:Datatype .
                         "Prima pista dell'aeroporto di Milano Malpensa (MXP)."@it ;
            rdfs:label "Pista1MXP"@it ,
                       "Runway 1 MXP"@en .
+
+
+###  http://www.semanticweb.org/sofia/ontologies/2026/acio/Pista2BCN
+:Pista2BCN rdf:type owl:NamedIndividual ,
+                    :Pista ;
+           :LunghezzaMetri 2660 ;
+           rdfs:label "Pista2BCN"@it ,
+                      "Runway 2 BCN"@en .
+
+
+###  http://www.semanticweb.org/sofia/ontologies/2026/acio/Pista2DXB
+:Pista2DXB rdf:type owl:NamedIndividual ,
+                    :Pista ;
+           :LunghezzaMetri 4000 ;
+           rdfs:label "Pista2DXB"@it ,
+                      "Runway 2 DXB"@en .
 
 
 ###  http://www.semanticweb.org/sofia/ontologies/2026/acio/Pista2FCO
@@ -815,9 +2017,83 @@ xsd:gYear rdf:type rdfs:Datatype .
                       "Runway 4 FCO"@en .
 
 
+###  http://www.semanticweb.org/sofia/ontologies/2026/acio/Roma
+:Roma rdf:type owl:NamedIndividual ,
+               :Città ;
+      :cittàInNazione :Italia ;
+      :NomeComune "Roma" ;
+      :Popolazione 2860000 ;
+      rdfs:label "Roma"@it ,
+                 "Rome"@en .
+
+
+###  http://www.semanticweb.org/sofia/ontologies/2026/acio/SEA
+:SEA rdf:type owl:NamedIndividual ,
+              :AutoritàAeroportuale ;
+     :gestisce :MXP ;
+     rdfs:label "SEA"@it ,
+                "SEA - Aeroporti di Milano"@en .
+
+
+###  http://www.semanticweb.org/sofia/ontologies/2026/acio/Spagna
+:Spagna rdf:type owl:NamedIndividual ,
+                 :Nazione ,
+                 [ rdf:type owl:Restriction ;
+                   owl:onProperty :CodiceISO ;
+                   owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                   owl:onDataRange xsd:string
+                 ] ;
+        :CodiceISO "ES" ;
+        :InZonaSchengen "true"^^xsd:boolean ;
+        :NomeNazione "Spagna" ;
+        rdfs:label "Spagna"@it ,
+                   "Spain"@en .
+
+
+###  http://www.semanticweb.org/sofia/ontologies/2026/acio/Terminal1BCN
+:Terminal1BCN rdf:type owl:NamedIndividual ,
+                       :Terminal ,
+                       [ rdf:type owl:Restriction ;
+                         owl:onProperty :haDogana ;
+                         owl:someValuesFrom :Dogana
+                       ] ,
+                       [ rdf:type owl:Restriction ;
+                         owl:onProperty :haGate ;
+                         owl:someValuesFrom :Gate
+                       ] ;
+              :haDogana :DoganaBCN ;
+              :haGate :Gate1T1BCN ;
+              rdfs:label "Terminal 1 BCN"@en ,
+                         "Terminal1BCN"@it .
+
+
+###  http://www.semanticweb.org/sofia/ontologies/2026/acio/Terminal1DXB
+:Terminal1DXB rdf:type owl:NamedIndividual ,
+                       :Terminal ,
+                       [ rdf:type owl:Restriction ;
+                         owl:onProperty :haDogana ;
+                         owl:someValuesFrom :Dogana
+                       ] ,
+                       [ rdf:type owl:Restriction ;
+                         owl:onProperty :haGate ;
+                         owl:someValuesFrom :Gate
+                       ] ;
+              :haDogana :DoganaDXB ;
+              :haGate :Gate1T1DXB ,
+                      :Gate2T1DXB ;
+              rdfs:label "Terminal 1 DXB"@en ,
+                         "Terminal1DXB"@it .
+
+
 ###  http://www.semanticweb.org/sofia/ontologies/2026/acio/Terminal1FCO
 :Terminal1FCO rdf:type owl:NamedIndividual ,
-                       :Terminal ;
+                       :Terminal ,
+                       [ rdf:type owl:Restriction ;
+                         owl:onProperty :haGate ;
+                         owl:someValuesFrom :Gate
+                       ] ;
+              :haGate :Gate1T1FCO ,
+                      :Gate2T1FCO ;
               rdfs:comment "Terminal 1 dell'aeroporto di Roma Fiumicino (FCO)."@it ,
                            "Terminal 1 of Rome Fiumicino Airport (FCO)."@en ;
               rdfs:label "Terminal 1 FCO"@en ,
@@ -826,9 +2102,19 @@ xsd:gYear rdf:type rdfs:Datatype .
 
 ###  http://www.semanticweb.org/sofia/ontologies/2026/acio/Terminal1MXP
 :Terminal1MXP rdf:type owl:NamedIndividual ,
-                       :Terminal ;
+                       :Terminal ,
+                       [ rdf:type owl:Restriction ;
+                         owl:onProperty :haDogana ;
+                         owl:someValuesFrom :Dogana
+                       ] ,
+                       [ rdf:type owl:Restriction ;
+                         owl:onProperty :haGate ;
+                         owl:someValuesFrom :Gate
+                       ] ;
               :haDogana :DoganaT1MXP ;
-              :haGate :Gate1T1MXP ;
+              :haGate :Gate1T1MXP ,
+                      :Gate2T1MXP ;
+              :haLounge :LoungeT1MXP ;
               rdfs:comment "Terminal 1 dell'aeroporto di Milano Malpensa (MXP), dotato di dogana e gate di imbarco."@it ,
                            "Terminal 1 of Milan Malpensa Airport (MXP), equipped with customs and boarding gates."@en ;
               rdfs:label "Terminal 1 MXP"@en ,
@@ -837,7 +2123,12 @@ xsd:gYear rdf:type rdfs:Datatype .
 
 ###  http://www.semanticweb.org/sofia/ontologies/2026/acio/Terminal2FCO
 :Terminal2FCO rdf:type owl:NamedIndividual ,
-                       :Terminal ;
+                       :Terminal ,
+                       [ rdf:type owl:Restriction ;
+                         owl:onProperty :haGate ;
+                         owl:someValuesFrom :Gate
+                       ] ;
+              :haGate :Gate1T2FCO ;
               rdfs:comment "Terminal 2 dell'aeroporto di Roma Fiumicino (FCO)."@it ,
                            "Terminal 2 of Rome Fiumicino Airport (FCO)."@en ;
               rdfs:label "Terminal 2 FCO"@en ,
@@ -846,7 +2137,17 @@ xsd:gYear rdf:type rdfs:Datatype .
 
 ###  http://www.semanticweb.org/sofia/ontologies/2026/acio/Terminal2MXP
 :Terminal2MXP rdf:type owl:NamedIndividual ,
-                       :Terminal ;
+                       :Terminal ,
+                       [ rdf:type owl:Restriction ;
+                         owl:onProperty :haDogana ;
+                         owl:someValuesFrom :Dogana
+                       ] ,
+                       [ rdf:type owl:Restriction ;
+                         owl:onProperty :haGate ;
+                         owl:someValuesFrom :Gate
+                       ] ;
+              :haDogana :DoganaT2MXP ;
+              :haGate :Gate1T2MXP ;
               rdfs:comment "Terminal 2 dell'aeroporto di Milano Malpensa (MXP)."@it ,
                            "Terminal 2 of Milan Malpensa Airport (MXP)."@en ;
               rdfs:label "Terminal 2 MXP"@en ,
@@ -855,16 +2156,68 @@ xsd:gYear rdf:type rdfs:Datatype .
 
 ###  http://www.semanticweb.org/sofia/ontologies/2026/acio/Terminal3FCO
 :Terminal3FCO rdf:type owl:NamedIndividual ,
-                       :Terminal ;
+                       :Terminal ,
+                       [ rdf:type owl:Restriction ;
+                         owl:onProperty :haDogana ;
+                         owl:someValuesFrom :Dogana
+                       ] ,
+                       [ rdf:type owl:Restriction ;
+                         owl:onProperty :haGate ;
+                         owl:someValuesFrom :Gate
+                       ] ;
               :haDogana :DoganaFCO ;
+              :haGate :Gate1T3FCO ;
+              :haLounge :LoungeT3FCO ;
               rdfs:comment "Terminal 3 dell'aeroporto di Roma Fiumicino (FCO), dotato di dogana."@it ,
                            "Terminal 3 of Rome Fiumicino Airport (FCO), equipped with customs."@en ;
               rdfs:label "Terminal 3 FCO"@en ,
                          "Terminal3FCO"@it .
 
 
+###  http://www.semanticweb.org/sofia/ontologies/2026/acio/VY3210
+:VY3210 rdf:type owl:NamedIndividual ,
+                 :Volo ,
+                 :VoloInternazionale ,
+                 :VoloSchengen ;
+        :arrivaA :BCN ;
+        :operatoDa :Vueling ;
+        :parteDa :MXP ;
+        :OrarioPartenzaSchedulato "2026-05-07T10:30:00"^^xsd:dateTime ;
+        rdfs:label "VY3210"@en ,
+                   "VY3210"@it .
+
+
+###  http://www.semanticweb.org/sofia/ontologies/2026/acio/VY3211
+:VY3211 rdf:type owl:NamedIndividual ,
+                 :Volo ,
+                 :VoloInternazionale ,
+                 :VoloSchengen ;
+        :arrivaA :MXP ;
+        :operatoDa :Vueling ;
+        :parteDa :BCN ;
+        :OrarioPartenzaSchedulato "2026-05-07T15:00:00"^^xsd:dateTime ;
+        rdfs:label "VY3211"@en ,
+                   "VY3211"@it .
+
+
+###  http://www.semanticweb.org/sofia/ontologies/2026/acio/Vueling
+:Vueling rdf:type owl:NamedIndividual ,
+                  :CompagniaAerea ;
+         :voloOperatoDa :VY3210 ,
+                        :VY3211 ;
+         rdfs:label "Vueling"@en ,
+                    "Vueling"@it .
+
+
 ###  http://www.semanticweb.org/sofia/ontologies/2026/acio/ZonaExtraSchengen
-:ZonaExtraSchengen rdf:type owl:NamedIndividual ;
+:ZonaExtraSchengen rdf:type owl:NamedIndividual ,
+                            :ZonaDoganale ,
+                            [ rdf:type owl:Class ;
+                              owl:oneOf ( :ZonaExtraSchengen
+                                          :ZonaSchengen
+                                          :ZonaTransito
+                                        )
+                            ] ;
                    rdfs:comment "Airport customs zone dedicated to flights to or from countries outside the Schengen area."@en ,
                                 "Zona doganale aeroportuale dedicata ai voli con destinazione o provenienza da paesi fuori dall'area Schengen."@it ;
                    rdfs:label "Extra-Schengen Zone"@en ,
@@ -872,7 +2225,14 @@ xsd:gYear rdf:type rdfs:Datatype .
 
 
 ###  http://www.semanticweb.org/sofia/ontologies/2026/acio/ZonaSchengen
-:ZonaSchengen rdf:type owl:NamedIndividual ;
+:ZonaSchengen rdf:type owl:NamedIndividual ,
+                       :ZonaDoganale ,
+                       [ rdf:type owl:Class ;
+                         owl:oneOf ( :ZonaExtraSchengen
+                                     :ZonaSchengen
+                                     :ZonaTransito
+                                   )
+                       ] ;
               rdfs:comment "Airport customs zone dedicated to flights within the Schengen area, without customs controls."@en ,
                            "Zona doganale aeroportuale dedicata ai voli interni all'area Schengen, senza controlli doganali."@it ;
               rdfs:label "Schengen Zone"@en ,
@@ -880,7 +2240,14 @@ xsd:gYear rdf:type rdfs:Datatype .
 
 
 ###  http://www.semanticweb.org/sofia/ontologies/2026/acio/ZonaTransito
-:ZonaTransito rdf:type owl:NamedIndividual ;
+:ZonaTransito rdf:type owl:NamedIndividual ,
+                       :ZonaDoganale ,
+                       [ rdf:type owl:Class ;
+                         owl:oneOf ( :ZonaExtraSchengen
+                                     :ZonaSchengen
+                                     :ZonaTransito
+                                   )
+                       ] ;
               rdfs:comment "Airport customs zone reserved for transit passengers who do not enter national territory."@en ,
                            "Zona doganale aeroportuale riservata ai passeggeri in transito che non entrano nel territorio nazionale."@it ;
               rdfs:label "Transit Zone"@en ,
@@ -891,8 +2258,855 @@ xsd:gYear rdf:type rdfs:Datatype .
 #    General axioms
 #################################################################
 
+[ owl:intersectionOf ( :Aeroporto
+                       [ rdf:type owl:Restriction ;
+                         owl:onProperty :haTerminal ;
+                         owl:someValuesFrom [ owl:intersectionOf ( :Terminal
+                                                                   [ rdf:type owl:Restriction ;
+                                                                     owl:onProperty :haDogana ;
+                                                                     owl:someValuesFrom :Dogana
+                                                                   ]
+                                                                 ) ;
+                                              rdf:type owl:Class
+                                            ]
+                       ]
+                     ) ;
+  rdf:type owl:Class ;
+  rdfs:subClassOf :Aeroporto
+] .
+
+
+[ owl:intersectionOf ( :Aeroporto
+                       [ rdf:type owl:Restriction ;
+                         owl:onProperty :haTerminal ;
+                         owl:someValuesFrom [ owl:intersectionOf ( :Terminal
+                                                                   [ rdf:type owl:Restriction ;
+                                                                     owl:onProperty :haDogana ;
+                                                                     owl:someValuesFrom :Dogana
+                                                                   ]
+                                                                 ) ;
+                                              rdf:type owl:Class
+                                            ]
+                       ]
+                     ) ;
+  rdf:type owl:Class ;
+  rdfs:subClassOf :AeroportoConDogana
+] .
+
+
+[ owl:intersectionOf ( :Aeroporto
+                       [ rdf:type owl:Restriction ;
+                         owl:onProperty :haTerminal ;
+                         owl:someValuesFrom [ owl:intersectionOf ( :Terminal
+                                                                   [ rdf:type owl:Restriction ;
+                                                                     owl:onProperty :haDogana ;
+                                                                     owl:someValuesFrom :Dogana
+                                                                   ]
+                                                                 ) ;
+                                              rdf:type owl:Class
+                                            ]
+                       ]
+                     ) ;
+  rdf:type owl:Class ;
+  rdfs:subClassOf [ rdf:type owl:Restriction ;
+                    owl:onProperty :haTerminal ;
+                    owl:someValuesFrom [ owl:intersectionOf ( :Terminal
+                                                              [ rdf:type owl:Restriction ;
+                                                                owl:onProperty :haDogana ;
+                                                                owl:someValuesFrom :Dogana
+                                                              ]
+                                                            ) ;
+                                         rdf:type owl:Class
+                                       ]
+                  ]
+] .
+
+
+[ owl:intersectionOf ( :Aeroporto
+                       [ rdf:type owl:Restriction ;
+                         owl:onProperty :haTerminal ;
+                         owl:someValuesFrom [ owl:intersectionOf ( :Terminal
+                                                                   [ rdf:type owl:Restriction ;
+                                                                     owl:onProperty :haDogana ;
+                                                                     owl:someValuesFrom :Dogana
+                                                                   ]
+                                                                 ) ;
+                                              rdf:type owl:Class
+                                            ]
+                       ]
+                     ) ;
+  rdf:type owl:Class ;
+  rdfs:subClassOf [ rdf:type owl:Restriction ;
+                    owl:onProperty :haPista ;
+                    owl:minQualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                    owl:onClass :Pista
+                  ]
+] .
+
+
+[ owl:intersectionOf ( :Aeroporto
+                       [ rdf:type owl:Restriction ;
+                         owl:onProperty :haTerminal ;
+                         owl:someValuesFrom [ owl:intersectionOf ( :Terminal
+                                                                   [ rdf:type owl:Restriction ;
+                                                                     owl:onProperty :haDogana ;
+                                                                     owl:someValuesFrom :Dogana
+                                                                   ]
+                                                                 ) ;
+                                              rdf:type owl:Class
+                                            ]
+                       ]
+                     ) ;
+  rdf:type owl:Class ;
+  rdfs:subClassOf [ rdf:type owl:Restriction ;
+                    owl:onProperty :haTerminal ;
+                    owl:minQualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                    owl:onClass :Terminal
+                  ]
+] .
+
+
+[ owl:intersectionOf ( :Aeroporto
+                       [ rdf:type owl:Restriction ;
+                         owl:onProperty :haTerminal ;
+                         owl:someValuesFrom [ owl:intersectionOf ( :Terminal
+                                                                   [ rdf:type owl:Restriction ;
+                                                                     owl:onProperty :haDogana ;
+                                                                     owl:someValuesFrom :Dogana
+                                                                   ]
+                                                                 ) ;
+                                              rdf:type owl:Class
+                                            ]
+                       ]
+                     ) ;
+  rdf:type owl:Class ;
+  rdfs:subClassOf [ rdf:type owl:Restriction ;
+                    owl:onProperty :CodiceIATA ;
+                    owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                    owl:onDataRange xsd:string
+                  ]
+] .
+
+
+[ owl:intersectionOf ( :Aeroporto
+                       [ rdf:type owl:Restriction ;
+                         owl:onProperty :haTerminal ;
+                         owl:someValuesFrom [ owl:intersectionOf ( :Terminal
+                                                                   [ rdf:type owl:Restriction ;
+                                                                     owl:onProperty :haDogana ;
+                                                                     owl:someValuesFrom :Dogana
+                                                                   ]
+                                                                 ) ;
+                                              rdf:type owl:Class
+                                            ]
+                       ]
+                     ) ;
+  rdf:type owl:Class ;
+  rdfs:subClassOf [ rdf:type owl:Restriction ;
+                    owl:onProperty :CodiceICAO ;
+                    owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                    owl:onDataRange xsd:string
+                  ]
+] .
+
+
+[ owl:intersectionOf ( :Aeroporto
+                       [ rdf:type owl:Restriction ;
+                         owl:onProperty :haTerminal ;
+                         owl:someValuesFrom [ owl:intersectionOf ( :Terminal
+                                                                   [ rdf:type owl:Restriction ;
+                                                                     owl:onProperty :haDogana ;
+                                                                     owl:someValuesFrom [ owl:intersectionOf ( :Dogana
+                                                                                                               [ rdf:type owl:Restriction ;
+                                                                                                                 owl:onProperty :haTipoZona ;
+                                                                                                                 owl:hasValue :ZonaExtraSchengen
+                                                                                                               ]
+                                                                                                             ) ;
+                                                                                          rdf:type owl:Class
+                                                                                        ]
+                                                                   ]
+                                                                 ) ;
+                                              rdf:type owl:Class
+                                            ]
+                       ]
+                     ) ;
+  rdf:type owl:Class ;
+  rdfs:subClassOf :Aeroporto
+] .
+
+
+[ owl:intersectionOf ( :Aeroporto
+                       [ rdf:type owl:Restriction ;
+                         owl:onProperty :haTerminal ;
+                         owl:someValuesFrom [ owl:intersectionOf ( :Terminal
+                                                                   [ rdf:type owl:Restriction ;
+                                                                     owl:onProperty :haDogana ;
+                                                                     owl:someValuesFrom [ owl:intersectionOf ( :Dogana
+                                                                                                               [ rdf:type owl:Restriction ;
+                                                                                                                 owl:onProperty :haTipoZona ;
+                                                                                                                 owl:hasValue :ZonaExtraSchengen
+                                                                                                               ]
+                                                                                                             ) ;
+                                                                                          rdf:type owl:Class
+                                                                                        ]
+                                                                   ]
+                                                                 ) ;
+                                              rdf:type owl:Class
+                                            ]
+                       ]
+                     ) ;
+  rdf:type owl:Class ;
+  rdfs:subClassOf [ rdf:type owl:Restriction ;
+                    owl:onProperty :haTerminal ;
+                    owl:someValuesFrom [ owl:intersectionOf ( :Terminal
+                                                              [ rdf:type owl:Restriction ;
+                                                                owl:onProperty :haDogana ;
+                                                                owl:someValuesFrom [ owl:intersectionOf ( :Dogana
+                                                                                                          [ rdf:type owl:Restriction ;
+                                                                                                            owl:onProperty :haTipoZona ;
+                                                                                                            owl:hasValue :ZonaExtraSchengen
+                                                                                                          ]
+                                                                                                        ) ;
+                                                                                     rdf:type owl:Class
+                                                                                   ]
+                                                              ]
+                                                            ) ;
+                                         rdf:type owl:Class
+                                       ]
+                  ]
+] .
+
+
+[ owl:intersectionOf ( :Aeroporto
+                       [ rdf:type owl:Restriction ;
+                         owl:onProperty :haTerminal ;
+                         owl:someValuesFrom [ owl:intersectionOf ( :Terminal
+                                                                   [ rdf:type owl:Restriction ;
+                                                                     owl:onProperty :haDogana ;
+                                                                     owl:someValuesFrom [ owl:intersectionOf ( :Dogana
+                                                                                                               [ rdf:type owl:Restriction ;
+                                                                                                                 owl:onProperty :haTipoZona ;
+                                                                                                                 owl:hasValue :ZonaExtraSchengen
+                                                                                                               ]
+                                                                                                             ) ;
+                                                                                          rdf:type owl:Class
+                                                                                        ]
+                                                                   ]
+                                                                 ) ;
+                                              rdf:type owl:Class
+                                            ]
+                       ]
+                     ) ;
+  rdf:type owl:Class ;
+  rdfs:subClassOf [ rdf:type owl:Restriction ;
+                    owl:onProperty :haPista ;
+                    owl:minQualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                    owl:onClass :Pista
+                  ]
+] .
+
+
+[ owl:intersectionOf ( :Aeroporto
+                       [ rdf:type owl:Restriction ;
+                         owl:onProperty :haTerminal ;
+                         owl:someValuesFrom [ owl:intersectionOf ( :Terminal
+                                                                   [ rdf:type owl:Restriction ;
+                                                                     owl:onProperty :haDogana ;
+                                                                     owl:someValuesFrom [ owl:intersectionOf ( :Dogana
+                                                                                                               [ rdf:type owl:Restriction ;
+                                                                                                                 owl:onProperty :haTipoZona ;
+                                                                                                                 owl:hasValue :ZonaExtraSchengen
+                                                                                                               ]
+                                                                                                             ) ;
+                                                                                          rdf:type owl:Class
+                                                                                        ]
+                                                                   ]
+                                                                 ) ;
+                                              rdf:type owl:Class
+                                            ]
+                       ]
+                     ) ;
+  rdf:type owl:Class ;
+  rdfs:subClassOf [ rdf:type owl:Restriction ;
+                    owl:onProperty :haTerminal ;
+                    owl:minQualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                    owl:onClass :Terminal
+                  ]
+] .
+
+
+[ owl:intersectionOf ( :Aeroporto
+                       [ rdf:type owl:Restriction ;
+                         owl:onProperty :haTerminal ;
+                         owl:someValuesFrom [ owl:intersectionOf ( :Terminal
+                                                                   [ rdf:type owl:Restriction ;
+                                                                     owl:onProperty :haDogana ;
+                                                                     owl:someValuesFrom [ owl:intersectionOf ( :Dogana
+                                                                                                               [ rdf:type owl:Restriction ;
+                                                                                                                 owl:onProperty :haTipoZona ;
+                                                                                                                 owl:hasValue :ZonaExtraSchengen
+                                                                                                               ]
+                                                                                                             ) ;
+                                                                                          rdf:type owl:Class
+                                                                                        ]
+                                                                   ]
+                                                                 ) ;
+                                              rdf:type owl:Class
+                                            ]
+                       ]
+                     ) ;
+  rdf:type owl:Class ;
+  rdfs:subClassOf [ rdf:type owl:Restriction ;
+                    owl:onProperty :CodiceIATA ;
+                    owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                    owl:onDataRange xsd:string
+                  ]
+] .
+
+
+[ owl:intersectionOf ( :Aeroporto
+                       [ rdf:type owl:Restriction ;
+                         owl:onProperty :haTerminal ;
+                         owl:someValuesFrom [ owl:intersectionOf ( :Terminal
+                                                                   [ rdf:type owl:Restriction ;
+                                                                     owl:onProperty :haDogana ;
+                                                                     owl:someValuesFrom [ owl:intersectionOf ( :Dogana
+                                                                                                               [ rdf:type owl:Restriction ;
+                                                                                                                 owl:onProperty :haTipoZona ;
+                                                                                                                 owl:hasValue :ZonaExtraSchengen
+                                                                                                               ]
+                                                                                                             ) ;
+                                                                                          rdf:type owl:Class
+                                                                                        ]
+                                                                   ]
+                                                                 ) ;
+                                              rdf:type owl:Class
+                                            ]
+                       ]
+                     ) ;
+  rdf:type owl:Class ;
+  rdfs:subClassOf [ rdf:type owl:Restriction ;
+                    owl:onProperty :CodiceICAO ;
+                    owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                    owl:onDataRange xsd:string
+                  ]
+] .
+
+
+[ owl:intersectionOf ( :Aeroporto
+                       [ rdf:type owl:Restriction ;
+                         owl:onProperty [ owl:inverseOf :parteDa
+                                        ] ;
+                         owl:someValuesFrom :VoloInternazionale
+                       ]
+                       [ rdf:type owl:Restriction ;
+                         owl:onProperty :haPista ;
+                         owl:minQualifiedCardinality "2"^^xsd:nonNegativeInteger ;
+                         owl:onClass :Pista
+                       ]
+                     ) ;
+  rdf:type owl:Class ;
+  rdfs:subClassOf :Aeroporto
+] .
+
+
+[ owl:intersectionOf ( :Aeroporto
+                       [ rdf:type owl:Restriction ;
+                         owl:onProperty [ owl:inverseOf :parteDa
+                                        ] ;
+                         owl:someValuesFrom :VoloInternazionale
+                       ]
+                       [ rdf:type owl:Restriction ;
+                         owl:onProperty :haPista ;
+                         owl:minQualifiedCardinality "2"^^xsd:nonNegativeInteger ;
+                         owl:onClass :Pista
+                       ]
+                     ) ;
+  rdf:type owl:Class ;
+  rdfs:subClassOf :HubAeroportuale
+] .
+
+
+[ owl:intersectionOf ( :Aeroporto
+                       [ rdf:type owl:Restriction ;
+                         owl:onProperty [ owl:inverseOf :parteDa
+                                        ] ;
+                         owl:someValuesFrom :VoloInternazionale
+                       ]
+                       [ rdf:type owl:Restriction ;
+                         owl:onProperty :haPista ;
+                         owl:minQualifiedCardinality "2"^^xsd:nonNegativeInteger ;
+                         owl:onClass :Pista
+                       ]
+                     ) ;
+  rdf:type owl:Class ;
+  rdfs:subClassOf [ rdf:type owl:Restriction ;
+                    owl:onProperty [ owl:inverseOf :parteDa
+                                   ] ;
+                    owl:someValuesFrom :VoloInternazionale
+                  ]
+] .
+
+
+[ owl:intersectionOf ( :Aeroporto
+                       [ rdf:type owl:Restriction ;
+                         owl:onProperty [ owl:inverseOf :parteDa
+                                        ] ;
+                         owl:someValuesFrom :VoloInternazionale
+                       ]
+                       [ rdf:type owl:Restriction ;
+                         owl:onProperty :haPista ;
+                         owl:minQualifiedCardinality "2"^^xsd:nonNegativeInteger ;
+                         owl:onClass :Pista
+                       ]
+                     ) ;
+  rdf:type owl:Class ;
+  rdfs:subClassOf [ rdf:type owl:Restriction ;
+                    owl:onProperty :haPista ;
+                    owl:minQualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                    owl:onClass :Pista
+                  ]
+] .
+
+
+[ owl:intersectionOf ( :Aeroporto
+                       [ rdf:type owl:Restriction ;
+                         owl:onProperty [ owl:inverseOf :parteDa
+                                        ] ;
+                         owl:someValuesFrom :VoloInternazionale
+                       ]
+                       [ rdf:type owl:Restriction ;
+                         owl:onProperty :haPista ;
+                         owl:minQualifiedCardinality "2"^^xsd:nonNegativeInteger ;
+                         owl:onClass :Pista
+                       ]
+                     ) ;
+  rdf:type owl:Class ;
+  rdfs:subClassOf [ rdf:type owl:Restriction ;
+                    owl:onProperty :haPista ;
+                    owl:minQualifiedCardinality "2"^^xsd:nonNegativeInteger ;
+                    owl:onClass :Pista
+                  ]
+] .
+
+
+[ owl:intersectionOf ( :Aeroporto
+                       [ rdf:type owl:Restriction ;
+                         owl:onProperty [ owl:inverseOf :parteDa
+                                        ] ;
+                         owl:someValuesFrom :VoloInternazionale
+                       ]
+                       [ rdf:type owl:Restriction ;
+                         owl:onProperty :haPista ;
+                         owl:minQualifiedCardinality "2"^^xsd:nonNegativeInteger ;
+                         owl:onClass :Pista
+                       ]
+                     ) ;
+  rdf:type owl:Class ;
+  rdfs:subClassOf [ rdf:type owl:Restriction ;
+                    owl:onProperty :haTerminal ;
+                    owl:minQualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                    owl:onClass :Terminal
+                  ]
+] .
+
+
+[ owl:intersectionOf ( :Aeroporto
+                       [ rdf:type owl:Restriction ;
+                         owl:onProperty [ owl:inverseOf :parteDa
+                                        ] ;
+                         owl:someValuesFrom :VoloInternazionale
+                       ]
+                       [ rdf:type owl:Restriction ;
+                         owl:onProperty :haPista ;
+                         owl:minQualifiedCardinality "2"^^xsd:nonNegativeInteger ;
+                         owl:onClass :Pista
+                       ]
+                     ) ;
+  rdf:type owl:Class ;
+  rdfs:subClassOf [ rdf:type owl:Restriction ;
+                    owl:onProperty :CodiceIATA ;
+                    owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                    owl:onDataRange xsd:string
+                  ]
+] .
+
+
+[ owl:intersectionOf ( :Aeroporto
+                       [ rdf:type owl:Restriction ;
+                         owl:onProperty [ owl:inverseOf :parteDa
+                                        ] ;
+                         owl:someValuesFrom :VoloInternazionale
+                       ]
+                       [ rdf:type owl:Restriction ;
+                         owl:onProperty :haPista ;
+                         owl:minQualifiedCardinality "2"^^xsd:nonNegativeInteger ;
+                         owl:onClass :Pista
+                       ]
+                     ) ;
+  rdf:type owl:Class ;
+  rdfs:subClassOf [ rdf:type owl:Restriction ;
+                    owl:onProperty :CodiceICAO ;
+                    owl:qualifiedCardinality "1"^^xsd:nonNegativeInteger ;
+                    owl:onDataRange xsd:string
+                  ]
+] .
+
+
+[ owl:intersectionOf ( :Dogana
+                       [ rdf:type owl:Restriction ;
+                         owl:onProperty :haTipoZona ;
+                         owl:hasValue :ZonaExtraSchengen
+                       ]
+                     ) ;
+  rdf:type owl:Class ;
+  rdfs:subClassOf :Dogana
+] .
+
+
+[ owl:intersectionOf ( :Dogana
+                       [ rdf:type owl:Restriction ;
+                         owl:onProperty :haTipoZona ;
+                         owl:hasValue :ZonaExtraSchengen
+                       ]
+                     ) ;
+  rdf:type owl:Class ;
+  rdfs:subClassOf [ rdf:type owl:Restriction ;
+                    owl:onProperty :haTipoZona ;
+                    owl:hasValue :ZonaExtraSchengen
+                  ]
+] .
+
+
+[ owl:intersectionOf ( :Terminal
+                       [ rdf:type owl:Restriction ;
+                         owl:onProperty :haDogana ;
+                         owl:someValuesFrom :Dogana
+                       ]
+                     ) ;
+  rdf:type owl:Class ;
+  rdfs:subClassOf :Terminal
+] .
+
+
+[ owl:intersectionOf ( :Terminal
+                       [ rdf:type owl:Restriction ;
+                         owl:onProperty :haDogana ;
+                         owl:someValuesFrom :Dogana
+                       ]
+                     ) ;
+  rdf:type owl:Class ;
+  rdfs:subClassOf [ rdf:type owl:Restriction ;
+                    owl:onProperty :haDogana ;
+                    owl:someValuesFrom :Dogana
+                  ]
+] .
+
+
+[ owl:intersectionOf ( :Terminal
+                       [ rdf:type owl:Restriction ;
+                         owl:onProperty :haDogana ;
+                         owl:someValuesFrom :Dogana
+                       ]
+                     ) ;
+  rdf:type owl:Class ;
+  rdfs:subClassOf [ rdf:type owl:Restriction ;
+                    owl:onProperty :haGate ;
+                    owl:someValuesFrom :Gate
+                  ]
+] .
+
+
+[ owl:intersectionOf ( :Terminal
+                       [ rdf:type owl:Restriction ;
+                         owl:onProperty :haDogana ;
+                         owl:someValuesFrom [ owl:intersectionOf ( :Dogana
+                                                                   [ rdf:type owl:Restriction ;
+                                                                     owl:onProperty :haTipoZona ;
+                                                                     owl:hasValue :ZonaExtraSchengen
+                                                                   ]
+                                                                 ) ;
+                                              rdf:type owl:Class
+                                            ]
+                       ]
+                     ) ;
+  rdf:type owl:Class ;
+  rdfs:subClassOf :Terminal
+] .
+
+
+[ owl:intersectionOf ( :Terminal
+                       [ rdf:type owl:Restriction ;
+                         owl:onProperty :haDogana ;
+                         owl:someValuesFrom [ owl:intersectionOf ( :Dogana
+                                                                   [ rdf:type owl:Restriction ;
+                                                                     owl:onProperty :haTipoZona ;
+                                                                     owl:hasValue :ZonaExtraSchengen
+                                                                   ]
+                                                                 ) ;
+                                              rdf:type owl:Class
+                                            ]
+                       ]
+                     ) ;
+  rdf:type owl:Class ;
+  rdfs:subClassOf [ rdf:type owl:Restriction ;
+                    owl:onProperty :haDogana ;
+                    owl:someValuesFrom :Dogana
+                  ]
+] .
+
+
+[ owl:intersectionOf ( :Terminal
+                       [ rdf:type owl:Restriction ;
+                         owl:onProperty :haDogana ;
+                         owl:someValuesFrom [ owl:intersectionOf ( :Dogana
+                                                                   [ rdf:type owl:Restriction ;
+                                                                     owl:onProperty :haTipoZona ;
+                                                                     owl:hasValue :ZonaExtraSchengen
+                                                                   ]
+                                                                 ) ;
+                                              rdf:type owl:Class
+                                            ]
+                       ]
+                     ) ;
+  rdf:type owl:Class ;
+  rdfs:subClassOf [ rdf:type owl:Restriction ;
+                    owl:onProperty :haDogana ;
+                    owl:someValuesFrom [ owl:intersectionOf ( :Dogana
+                                                              [ rdf:type owl:Restriction ;
+                                                                owl:onProperty :haTipoZona ;
+                                                                owl:hasValue :ZonaExtraSchengen
+                                                              ]
+                                                            ) ;
+                                         rdf:type owl:Class
+                                       ]
+                  ]
+] .
+
+
+[ owl:intersectionOf ( :Terminal
+                       [ rdf:type owl:Restriction ;
+                         owl:onProperty :haDogana ;
+                         owl:someValuesFrom [ owl:intersectionOf ( :Dogana
+                                                                   [ rdf:type owl:Restriction ;
+                                                                     owl:onProperty :haTipoZona ;
+                                                                     owl:hasValue :ZonaExtraSchengen
+                                                                   ]
+                                                                 ) ;
+                                              rdf:type owl:Class
+                                            ]
+                       ]
+                     ) ;
+  rdf:type owl:Class ;
+  rdfs:subClassOf [ rdf:type owl:Restriction ;
+                    owl:onProperty :haGate ;
+                    owl:someValuesFrom :Gate
+                  ]
+] .
+
+
+[ owl:intersectionOf ( :VoloInternazionale
+                       [ rdf:type owl:Restriction ;
+                         owl:onProperty :arrivaA ;
+                         owl:someValuesFrom [ owl:intersectionOf ( :Aeroporto
+                                                                   [ rdf:type owl:Restriction ;
+                                                                     owl:onProperty :haTerminal ;
+                                                                     owl:someValuesFrom [ owl:intersectionOf ( :Terminal
+                                                                                                               [ rdf:type owl:Restriction ;
+                                                                                                                 owl:onProperty :haDogana ;
+                                                                                                                 owl:someValuesFrom [ owl:intersectionOf ( :Dogana
+                                                                                                                                                           [ rdf:type owl:Restriction ;
+                                                                                                                                                             owl:onProperty :haTipoZona ;
+                                                                                                                                                             owl:hasValue :ZonaExtraSchengen
+                                                                                                                                                           ]
+                                                                                                                                                         ) ;
+                                                                                                                                      rdf:type owl:Class
+                                                                                                                                    ]
+                                                                                                               ]
+                                                                                                             ) ;
+                                                                                          rdf:type owl:Class
+                                                                                        ]
+                                                                   ]
+                                                                 ) ;
+                                              rdf:type owl:Class
+                                            ]
+                       ]
+                     ) ;
+  rdf:type owl:Class ;
+  rdfs:subClassOf :Volo
+] .
+
+
+[ owl:intersectionOf ( :VoloInternazionale
+                       [ rdf:type owl:Restriction ;
+                         owl:onProperty :arrivaA ;
+                         owl:someValuesFrom [ owl:intersectionOf ( :Aeroporto
+                                                                   [ rdf:type owl:Restriction ;
+                                                                     owl:onProperty :haTerminal ;
+                                                                     owl:someValuesFrom [ owl:intersectionOf ( :Terminal
+                                                                                                               [ rdf:type owl:Restriction ;
+                                                                                                                 owl:onProperty :haDogana ;
+                                                                                                                 owl:someValuesFrom [ owl:intersectionOf ( :Dogana
+                                                                                                                                                           [ rdf:type owl:Restriction ;
+                                                                                                                                                             owl:onProperty :haTipoZona ;
+                                                                                                                                                             owl:hasValue :ZonaExtraSchengen
+                                                                                                                                                           ]
+                                                                                                                                                         ) ;
+                                                                                                                                      rdf:type owl:Class
+                                                                                                                                    ]
+                                                                                                               ]
+                                                                                                             ) ;
+                                                                                          rdf:type owl:Class
+                                                                                        ]
+                                                                   ]
+                                                                 ) ;
+                                              rdf:type owl:Class
+                                            ]
+                       ]
+                     ) ;
+  rdf:type owl:Class ;
+  rdfs:subClassOf :VoloExtraSchengen
+] .
+
+
+[ owl:intersectionOf ( :VoloInternazionale
+                       [ rdf:type owl:Restriction ;
+                         owl:onProperty :arrivaA ;
+                         owl:someValuesFrom [ owl:intersectionOf ( :Aeroporto
+                                                                   [ rdf:type owl:Restriction ;
+                                                                     owl:onProperty :haTerminal ;
+                                                                     owl:someValuesFrom [ owl:intersectionOf ( :Terminal
+                                                                                                               [ rdf:type owl:Restriction ;
+                                                                                                                 owl:onProperty :haDogana ;
+                                                                                                                 owl:someValuesFrom [ owl:intersectionOf ( :Dogana
+                                                                                                                                                           [ rdf:type owl:Restriction ;
+                                                                                                                                                             owl:onProperty :haTipoZona ;
+                                                                                                                                                             owl:hasValue :ZonaExtraSchengen
+                                                                                                                                                           ]
+                                                                                                                                                         ) ;
+                                                                                                                                      rdf:type owl:Class
+                                                                                                                                    ]
+                                                                                                               ]
+                                                                                                             ) ;
+                                                                                          rdf:type owl:Class
+                                                                                        ]
+                                                                   ]
+                                                                 ) ;
+                                              rdf:type owl:Class
+                                            ]
+                       ]
+                     ) ;
+  rdf:type owl:Class ;
+  rdfs:subClassOf :VoloInternazionale
+] .
+
+
+[ owl:intersectionOf ( :VoloInternazionale
+                       [ rdf:type owl:Restriction ;
+                         owl:onProperty :arrivaA ;
+                         owl:someValuesFrom [ owl:intersectionOf ( :Aeroporto
+                                                                   [ rdf:type owl:Restriction ;
+                                                                     owl:onProperty :haTerminal ;
+                                                                     owl:someValuesFrom [ owl:intersectionOf ( :Terminal
+                                                                                                               [ rdf:type owl:Restriction ;
+                                                                                                                 owl:onProperty :haDogana ;
+                                                                                                                 owl:someValuesFrom [ owl:intersectionOf ( :Dogana
+                                                                                                                                                           [ rdf:type owl:Restriction ;
+                                                                                                                                                             owl:onProperty :haTipoZona ;
+                                                                                                                                                             owl:hasValue :ZonaExtraSchengen
+                                                                                                                                                           ]
+                                                                                                                                                         ) ;
+                                                                                                                                      rdf:type owl:Class
+                                                                                                                                    ]
+                                                                                                               ]
+                                                                                                             ) ;
+                                                                                          rdf:type owl:Class
+                                                                                        ]
+                                                                   ]
+                                                                 ) ;
+                                              rdf:type owl:Class
+                                            ]
+                       ]
+                     ) ;
+  rdf:type owl:Class ;
+  rdfs:subClassOf [ rdf:type owl:Restriction ;
+                    owl:onProperty :arrivaA ;
+                    owl:someValuesFrom [ owl:intersectionOf ( :Aeroporto
+                                                              [ rdf:type owl:Restriction ;
+                                                                owl:onProperty :haTerminal ;
+                                                                owl:someValuesFrom [ owl:intersectionOf ( :Terminal
+                                                                                                          [ rdf:type owl:Restriction ;
+                                                                                                            owl:onProperty :haDogana ;
+                                                                                                            owl:someValuesFrom [ owl:intersectionOf ( :Dogana
+                                                                                                                                                      [ rdf:type owl:Restriction ;
+                                                                                                                                                        owl:onProperty :haTipoZona ;
+                                                                                                                                                        owl:hasValue :ZonaExtraSchengen
+                                                                                                                                                      ]
+                                                                                                                                                    ) ;
+                                                                                                                                 rdf:type owl:Class
+                                                                                                                               ]
+                                                                                                          ]
+                                                                                                        ) ;
+                                                                                     rdf:type owl:Class
+                                                                                   ]
+                                                              ]
+                                                            ) ;
+                                         rdf:type owl:Class
+                                       ]
+                  ]
+] .
+
+
+[ rdf:type owl:Class ;
+  owl:oneOf ( :ZonaExtraSchengen
+              :ZonaSchengen
+              :ZonaTransito
+            ) ;
+  rdfs:subClassOf :ZonaDoganale
+] .
+
+
+[ rdf:type owl:Restriction ;
+  owl:onProperty :haDogana ;
+  owl:someValuesFrom [ owl:intersectionOf ( :Dogana
+                                            [ rdf:type owl:Restriction ;
+                                              owl:onProperty :haTipoZona ;
+                                              owl:hasValue :ZonaExtraSchengen
+                                            ]
+                                          ) ;
+                       rdf:type owl:Class
+                     ] ;
+  rdfs:subClassOf [ rdf:type owl:Restriction ;
+                    owl:onProperty :haDogana ;
+                    owl:someValuesFrom :Dogana
+                  ]
+] .
+
+
 [ rdf:type owl:AllDifferent ;
-  owl:distinctMembers ( :DXB
+  owl:distinctMembers ( :ADR
+                        :AENA
+                        :DAEG
+                        :SEA
+                      )
+] .
+
+
+[ rdf:type owl:AllDifferent ;
+  owl:distinctMembers ( :AZ202
+                        :AZ610
+                        :EK001
+                        :EK205
+                        :EK450
+                        :VY3210
+                        :VY3211
+                      )
+] .
+
+
+[ rdf:type owl:AllDifferent ;
+  owl:distinctMembers ( :BCN
+                        :DXB
                         :FCO
                         :MXP
                       )
@@ -900,8 +3114,62 @@ xsd:gYear rdf:type rdfs:Datatype .
 
 
 [ rdf:type owl:AllDifferent ;
-  owl:distinctMembers ( :Pista1FCO
+  owl:distinctMembers ( :Barcellona
+                        :Dubai
+                        :Milano
+                        :Roma
+                      )
+] .
+
+
+[ rdf:type owl:AllDifferent ;
+  owl:distinctMembers ( :DoganaBCN
+                        :DoganaDXB
+                        :DoganaFCO
+                        :DoganaT1MXP
+                        :DoganaT2MXP
+                      )
+] .
+
+
+[ rdf:type owl:AllDifferent ;
+  owl:distinctMembers ( :Emirates
+                        :ITAAirways
+                        :Vueling
+                      )
+] .
+
+
+[ rdf:type owl:AllDifferent ;
+  owl:distinctMembers ( :EmiratiArabiUniti
+                        :Italia
+                        :Spagna
+                      )
+] .
+
+
+[ rdf:type owl:AllDifferent ;
+  owl:distinctMembers ( :Gate1T1BCN
+                        :Gate1T1DXB
+                        :Gate1T1FCO
+                        :Gate1T1MXP
+                        :Gate1T2FCO
+                        :Gate1T2MXP
+                        :Gate1T3FCO
+                        :Gate2T1DXB
+                        :Gate2T1FCO
+                        :Gate2T1MXP
+                      )
+] .
+
+
+[ rdf:type owl:AllDifferent ;
+  owl:distinctMembers ( :Pista1BCN
+                        :Pista1DXB
+                        :Pista1FCO
                         :Pista1MXP
+                        :Pista2BCN
+                        :Pista2DXB
                         :Pista2FCO
                         :Pista2MXP
                         :Pista3FCO
@@ -911,7 +3179,9 @@ xsd:gYear rdf:type rdfs:Datatype .
 
 
 [ rdf:type owl:AllDifferent ;
-  owl:distinctMembers ( :Terminal1FCO
+  owl:distinctMembers ( :Terminal1BCN
+                        :Terminal1DXB
+                        :Terminal1FCO
                         :Terminal1MXP
                         :Terminal2FCO
                         :Terminal2MXP
@@ -919,5 +3189,264 @@ xsd:gYear rdf:type rdfs:Datatype .
                       )
 ] .
 
+
+#################################################################
+#    Rules
+#################################################################
+
+:a rdf:type <http://www.w3.org/2003/11/swrl#Variable> .
+
+:auth rdf:type <http://www.w3.org/2003/11/swrl#Variable> .
+
+:pax rdf:type <http://www.w3.org/2003/11/swrl#Variable> .
+
+:p rdf:type <http://www.w3.org/2003/11/swrl#Variable> .
+
+:lung rdf:type <http://www.w3.org/2003/11/swrl#Variable> .
+
+:indice rdf:type <http://www.w3.org/2003/11/swrl#Variable> .
+
+:a1 rdf:type <http://www.w3.org/2003/11/swrl#Variable> .
+
+:a2 rdf:type <http://www.w3.org/2003/11/swrl#Variable> .
+
+:v rdf:type <http://www.w3.org/2003/11/swrl#Variable> .
+
+:n rdf:type <http://www.w3.org/2003/11/swrl#Variable> .
+
+:n1 rdf:type <http://www.w3.org/2003/11/swrl#Variable> .
+
+:n2 rdf:type <http://www.w3.org/2003/11/swrl#Variable> .
+
+[ <http://swrl.stanford.edu/ontologies/3.3/swrla.owl#isRuleEnabled> "true"^^xsd:boolean ;
+   rdfs:comment "Classificazione aeroporto civile tramite autorità di gestione" ;
+   rdfs:label "Regola 4" ;
+   rdf:type <http://www.w3.org/2003/11/swrl#Imp> ;
+   <http://www.w3.org/2003/11/swrl#body> [ rdf:type <http://www.w3.org/2003/11/swrl#AtomList> ;
+                                           rdf:first [ rdf:type <http://www.w3.org/2003/11/swrl#ClassAtom> ;
+                                                       <http://www.w3.org/2003/11/swrl#classPredicate> :Aeroporto ;
+                                                       <http://www.w3.org/2003/11/swrl#argument1> :a
+                                                     ] ;
+                                           rdf:rest [ rdf:type <http://www.w3.org/2003/11/swrl#AtomList> ;
+                                                      rdf:first [ rdf:type <http://www.w3.org/2003/11/swrl#IndividualPropertyAtom> ;
+                                                                  <http://www.w3.org/2003/11/swrl#propertyPredicate> :gestitoDa ;
+                                                                  <http://www.w3.org/2003/11/swrl#argument1> :a ;
+                                                                  <http://www.w3.org/2003/11/swrl#argument2> :auth
+                                                                ] ;
+                                                      rdf:rest [ rdf:type <http://www.w3.org/2003/11/swrl#AtomList> ;
+                                                                 rdf:first [ rdf:type <http://www.w3.org/2003/11/swrl#ClassAtom> ;
+                                                                             <http://www.w3.org/2003/11/swrl#classPredicate> :AutoritàAeroportuale ;
+                                                                             <http://www.w3.org/2003/11/swrl#argument1> :auth
+                                                                           ] ;
+                                                                 rdf:rest rdf:nil
+                                                               ]
+                                                    ]
+                                         ] ;
+   <http://www.w3.org/2003/11/swrl#head> [ rdf:type <http://www.w3.org/2003/11/swrl#AtomList> ;
+                                           rdf:first [ rdf:type <http://www.w3.org/2003/11/swrl#ClassAtom> ;
+                                                       <http://www.w3.org/2003/11/swrl#classPredicate> :AeroportoCivile ;
+                                                       <http://www.w3.org/2003/11/swrl#argument1> :a
+                                                     ] ;
+                                           rdf:rest rdf:nil
+                                         ]
+ ] .
+
+[ <http://swrl.stanford.edu/ontologies/3.3/swrla.owl#isRuleEnabled> "true"^^xsd:boolean ;
+   rdfs:comment "Soglia di traffico con built-in numerico" ;
+   rdfs:label "Regola 5" ;
+   rdf:type <http://www.w3.org/2003/11/swrl#Imp> ;
+   <http://www.w3.org/2003/11/swrl#body> [ rdf:type <http://www.w3.org/2003/11/swrl#AtomList> ;
+                                           rdf:first [ rdf:type <http://www.w3.org/2003/11/swrl#ClassAtom> ;
+                                                       <http://www.w3.org/2003/11/swrl#classPredicate> :Aeroporto ;
+                                                       <http://www.w3.org/2003/11/swrl#argument1> :a
+                                                     ] ;
+                                           rdf:rest [ rdf:type <http://www.w3.org/2003/11/swrl#AtomList> ;
+                                                      rdf:first [ rdf:type <http://www.w3.org/2003/11/swrl#DatavaluedPropertyAtom> ;
+                                                                  <http://www.w3.org/2003/11/swrl#propertyPredicate> :PasseggeriAnnui ;
+                                                                  <http://www.w3.org/2003/11/swrl#argument1> :a ;
+                                                                  <http://www.w3.org/2003/11/swrl#argument2> :pax
+                                                                ] ;
+                                                      rdf:rest [ rdf:type <http://www.w3.org/2003/11/swrl#AtomList> ;
+                                                                 rdf:first [ rdf:type <http://www.w3.org/2003/11/swrl#IndividualPropertyAtom> ;
+                                                                             <http://www.w3.org/2003/11/swrl#propertyPredicate> :haPista ;
+                                                                             <http://www.w3.org/2003/11/swrl#argument1> :a ;
+                                                                             <http://www.w3.org/2003/11/swrl#argument2> :p
+                                                                           ] ;
+                                                                 rdf:rest [ rdf:type <http://www.w3.org/2003/11/swrl#AtomList> ;
+                                                                            rdf:first [ rdf:type <http://www.w3.org/2003/11/swrl#DatavaluedPropertyAtom> ;
+                                                                                        <http://www.w3.org/2003/11/swrl#propertyPredicate> :LunghezzaMetri ;
+                                                                                        <http://www.w3.org/2003/11/swrl#argument1> :p ;
+                                                                                        <http://www.w3.org/2003/11/swrl#argument2> :lung
+                                                                                      ] ;
+                                                                            rdf:rest [ rdf:type <http://www.w3.org/2003/11/swrl#AtomList> ;
+                                                                                       rdf:first [ rdf:type <http://www.w3.org/2003/11/swrl#BuiltinAtom> ;
+                                                                                                   <http://www.w3.org/2003/11/swrl#builtin> <http://www.w3.org/2003/11/swrlb#divide> ;
+                                                                                                   <http://www.w3.org/2003/11/swrl#arguments> ( :indice
+                                                                                                                                                :pax
+                                                                                                                                                :lung
+                                                                                                                                              )
+                                                                                                 ] ;
+                                                                                       rdf:rest [ rdf:type <http://www.w3.org/2003/11/swrl#AtomList> ;
+                                                                                                  rdf:first [ rdf:type <http://www.w3.org/2003/11/swrl#BuiltinAtom> ;
+                                                                                                              <http://www.w3.org/2003/11/swrl#builtin> <http://www.w3.org/2003/11/swrlb#greaterThan> ;
+                                                                                                              <http://www.w3.org/2003/11/swrl#arguments> [ rdf:type rdf:List ;
+                                                                                                                                                           rdf:first :indice ;
+                                                                                                                                                           rdf:rest [ rdf:type rdf:List ;
+                                                                                                                                                                      rdf:first 7000 ;
+                                                                                                                                                                      rdf:rest rdf:nil
+                                                                                                                                                                    ]
+                                                                                                                                                         ]
+                                                                                                            ] ;
+                                                                                                  rdf:rest rdf:nil
+                                                                                                ]
+                                                                                     ]
+                                                                          ]
+                                                               ]
+                                                    ]
+                                         ] ;
+   <http://www.w3.org/2003/11/swrl#head> [ rdf:type <http://www.w3.org/2003/11/swrl#AtomList> ;
+                                           rdf:first [ rdf:type <http://www.w3.org/2003/11/swrl#ClassAtom> ;
+                                                       <http://www.w3.org/2003/11/swrl#classPredicate> :HubAeroportuale ;
+                                                       <http://www.w3.org/2003/11/swrl#argument1> :a
+                                                     ] ;
+                                           rdf:rest rdf:nil
+                                         ]
+ ] .
+
+[ <http://swrl.stanford.edu/ontologies/3.3/swrla.owl#isRuleEnabled> "true"^^xsd:boolean ;
+   rdfs:comment "Simmetria del collegamento tra aeroporti" ;
+   rdfs:label "Regola 2" ;
+   rdf:type <http://www.w3.org/2003/11/swrl#Imp> ;
+   <http://www.w3.org/2003/11/swrl#body> [ rdf:type <http://www.w3.org/2003/11/swrl#AtomList> ;
+                                           rdf:first [ rdf:type <http://www.w3.org/2003/11/swrl#ClassAtom> ;
+                                                       <http://www.w3.org/2003/11/swrl#classPredicate> :Aeroporto ;
+                                                       <http://www.w3.org/2003/11/swrl#argument1> :a1
+                                                     ] ;
+                                           rdf:rest [ rdf:type <http://www.w3.org/2003/11/swrl#AtomList> ;
+                                                      rdf:first [ rdf:type <http://www.w3.org/2003/11/swrl#ClassAtom> ;
+                                                                  <http://www.w3.org/2003/11/swrl#classPredicate> :Aeroporto ;
+                                                                  <http://www.w3.org/2003/11/swrl#argument1> :a2
+                                                                ] ;
+                                                      rdf:rest [ rdf:type <http://www.w3.org/2003/11/swrl#AtomList> ;
+                                                                 rdf:first [ rdf:type <http://www.w3.org/2003/11/swrl#IndividualPropertyAtom> ;
+                                                                             <http://www.w3.org/2003/11/swrl#propertyPredicate> :collegatoCon ;
+                                                                             <http://www.w3.org/2003/11/swrl#argument1> :a1 ;
+                                                                             <http://www.w3.org/2003/11/swrl#argument2> :a2
+                                                                           ] ;
+                                                                 rdf:rest rdf:nil
+                                                               ]
+                                                    ]
+                                         ] ;
+   <http://www.w3.org/2003/11/swrl#head> [ rdf:type <http://www.w3.org/2003/11/swrl#AtomList> ;
+                                           rdf:first [ rdf:type <http://www.w3.org/2003/11/swrl#IndividualPropertyAtom> ;
+                                                       <http://www.w3.org/2003/11/swrl#propertyPredicate> :collegatoCon ;
+                                                       <http://www.w3.org/2003/11/swrl#argument1> :a2 ;
+                                                       <http://www.w3.org/2003/11/swrl#argument2> :a1
+                                                     ] ;
+                                           rdf:rest rdf:nil
+                                         ]
+ ] .
+
+[ <http://swrl.stanford.edu/ontologies/3.3/swrla.owl#isRuleEnabled> "true"^^xsd:boolean ;
+   rdfs:comment "Classificazione volo interno da confronto geografico" ;
+   rdfs:label "Regola 1" ;
+   rdf:type <http://www.w3.org/2003/11/swrl#Imp> ;
+   <http://www.w3.org/2003/11/swrl#body> [ rdf:type <http://www.w3.org/2003/11/swrl#AtomList> ;
+                                           rdf:first [ rdf:type <http://www.w3.org/2003/11/swrl#ClassAtom> ;
+                                                       <http://www.w3.org/2003/11/swrl#classPredicate> :Volo ;
+                                                       <http://www.w3.org/2003/11/swrl#argument1> :v
+                                                     ] ;
+                                           rdf:rest [ rdf:type <http://www.w3.org/2003/11/swrl#AtomList> ;
+                                                      rdf:first [ rdf:type <http://www.w3.org/2003/11/swrl#IndividualPropertyAtom> ;
+                                                                  <http://www.w3.org/2003/11/swrl#propertyPredicate> :parteDa ;
+                                                                  <http://www.w3.org/2003/11/swrl#argument1> :v ;
+                                                                  <http://www.w3.org/2003/11/swrl#argument2> :a1
+                                                                ] ;
+                                                      rdf:rest [ rdf:type <http://www.w3.org/2003/11/swrl#AtomList> ;
+                                                                 rdf:first [ rdf:type <http://www.w3.org/2003/11/swrl#IndividualPropertyAtom> ;
+                                                                             <http://www.w3.org/2003/11/swrl#propertyPredicate> :arrivaA ;
+                                                                             <http://www.w3.org/2003/11/swrl#argument1> :v ;
+                                                                             <http://www.w3.org/2003/11/swrl#argument2> :a2
+                                                                           ] ;
+                                                                 rdf:rest [ rdf:type <http://www.w3.org/2003/11/swrl#AtomList> ;
+                                                                            rdf:first [ rdf:type <http://www.w3.org/2003/11/swrl#IndividualPropertyAtom> ;
+                                                                                        <http://www.w3.org/2003/11/swrl#propertyPredicate> :situatoIn ;
+                                                                                        <http://www.w3.org/2003/11/swrl#argument1> :a1 ;
+                                                                                        <http://www.w3.org/2003/11/swrl#argument2> :n
+                                                                                      ] ;
+                                                                            rdf:rest [ rdf:type <http://www.w3.org/2003/11/swrl#AtomList> ;
+                                                                                       rdf:first [ rdf:type <http://www.w3.org/2003/11/swrl#IndividualPropertyAtom> ;
+                                                                                                   <http://www.w3.org/2003/11/swrl#propertyPredicate> :situatoIn ;
+                                                                                                   <http://www.w3.org/2003/11/swrl#argument1> :a2 ;
+                                                                                                   <http://www.w3.org/2003/11/swrl#argument2> :n
+                                                                                                 ] ;
+                                                                                       rdf:rest rdf:nil
+                                                                                     ]
+                                                                          ]
+                                                               ]
+                                                    ]
+                                         ] ;
+   <http://www.w3.org/2003/11/swrl#head> [ rdf:type <http://www.w3.org/2003/11/swrl#AtomList> ;
+                                           rdf:first [ rdf:type <http://www.w3.org/2003/11/swrl#ClassAtom> ;
+                                                       <http://www.w3.org/2003/11/swrl#classPredicate> :VoloInterno ;
+                                                       <http://www.w3.org/2003/11/swrl#argument1> :v
+                                                     ] ;
+                                           rdf:rest rdf:nil
+                                         ]
+ ] .
+
+[ <http://swrl.stanford.edu/ontologies/3.3/swrla.owl#isRuleEnabled> "true"^^xsd:boolean ;
+   rdfs:comment "Classificazione volo internazionale da confronto geografico" ;
+   rdfs:label "Regola 3" ;
+   rdf:type <http://www.w3.org/2003/11/swrl#Imp> ;
+   <http://www.w3.org/2003/11/swrl#body> [ rdf:type <http://www.w3.org/2003/11/swrl#AtomList> ;
+                                           rdf:first [ rdf:type <http://www.w3.org/2003/11/swrl#ClassAtom> ;
+                                                       <http://www.w3.org/2003/11/swrl#classPredicate> :Volo ;
+                                                       <http://www.w3.org/2003/11/swrl#argument1> :v
+                                                     ] ;
+                                           rdf:rest [ rdf:type <http://www.w3.org/2003/11/swrl#AtomList> ;
+                                                      rdf:first [ rdf:type <http://www.w3.org/2003/11/swrl#IndividualPropertyAtom> ;
+                                                                  <http://www.w3.org/2003/11/swrl#propertyPredicate> :parteDa ;
+                                                                  <http://www.w3.org/2003/11/swrl#argument1> :v ;
+                                                                  <http://www.w3.org/2003/11/swrl#argument2> :a1
+                                                                ] ;
+                                                      rdf:rest [ rdf:type <http://www.w3.org/2003/11/swrl#AtomList> ;
+                                                                 rdf:first [ rdf:type <http://www.w3.org/2003/11/swrl#IndividualPropertyAtom> ;
+                                                                             <http://www.w3.org/2003/11/swrl#propertyPredicate> :arrivaA ;
+                                                                             <http://www.w3.org/2003/11/swrl#argument1> :v ;
+                                                                             <http://www.w3.org/2003/11/swrl#argument2> :a2
+                                                                           ] ;
+                                                                 rdf:rest [ rdf:type <http://www.w3.org/2003/11/swrl#AtomList> ;
+                                                                            rdf:first [ rdf:type <http://www.w3.org/2003/11/swrl#IndividualPropertyAtom> ;
+                                                                                        <http://www.w3.org/2003/11/swrl#propertyPredicate> :situatoIn ;
+                                                                                        <http://www.w3.org/2003/11/swrl#argument1> :a1 ;
+                                                                                        <http://www.w3.org/2003/11/swrl#argument2> :n1
+                                                                                      ] ;
+                                                                            rdf:rest [ rdf:type <http://www.w3.org/2003/11/swrl#AtomList> ;
+                                                                                       rdf:first [ rdf:type <http://www.w3.org/2003/11/swrl#IndividualPropertyAtom> ;
+                                                                                                   <http://www.w3.org/2003/11/swrl#propertyPredicate> :situatoIn ;
+                                                                                                   <http://www.w3.org/2003/11/swrl#argument1> :a2 ;
+                                                                                                   <http://www.w3.org/2003/11/swrl#argument2> :n2
+                                                                                                 ] ;
+                                                                                       rdf:rest [ rdf:type <http://www.w3.org/2003/11/swrl#AtomList> ;
+                                                                                                  rdf:first [ rdf:type <http://www.w3.org/2003/11/swrl#DifferentIndividualsAtom> ;
+                                                                                                              <http://www.w3.org/2003/11/swrl#argument1> :n1 ;
+                                                                                                              <http://www.w3.org/2003/11/swrl#argument2> :n2
+                                                                                                            ] ;
+                                                                                                  rdf:rest rdf:nil
+                                                                                                ]
+                                                                                     ]
+                                                                          ]
+                                                               ]
+                                                    ]
+                                         ] ;
+   <http://www.w3.org/2003/11/swrl#head> [ rdf:type <http://www.w3.org/2003/11/swrl#AtomList> ;
+                                           rdf:first [ rdf:type <http://www.w3.org/2003/11/swrl#ClassAtom> ;
+                                                       <http://www.w3.org/2003/11/swrl#classPredicate> :VoloInternazionale ;
+                                                       <http://www.w3.org/2003/11/swrl#argument1> :v
+                                                     ] ;
+                                           rdf:rest rdf:nil
+                                         ]
+ ] .
 
 ###  Generated by the OWL API (version 4.5.29.2024-05-13T12:11:03Z) https://github.com/owlcs/owlapi
